@@ -1,6 +1,12 @@
-import React from "react";
+import React from 'react';
 
-export function NoTokensMessage({ selectedAddress }) {
+interface NoTokensMessageProps {
+  selectedAddress: string;
+}
+
+const NoTokensMessage: React.FC<NoTokensMessageProps> = ({
+  selectedAddress,
+}: NoTokensMessageProps) => {
   return (
     <>
       <p>You don't have tokens to transfer</p>
@@ -13,3 +19,5 @@ export function NoTokensMessage({ selectedAddress }) {
     </>
   );
 }
+
+export default NoTokensMessage;

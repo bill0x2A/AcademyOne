@@ -1,0 +1,1 @@
+export const HARDHAT_NETWORK_ID = '31337';

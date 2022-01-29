@@ -1,39 +1,25 @@
-# Sample React Dapp
+# New Project
 
-This directory has a sample Dapp to interact with your contracts, built using
-React.
+> ✨ Bootstrapped with Create Snowpack App (CSA).
 
-## Running the Dapp
+## Available Scripts
 
-This project uses [`create-react-app`](https://create-react-app.dev/), so most
-configuration files are handled by it.
+### npm start
 
-To run it, you just need to execute `npm start` in a terminal, and open
-[http://localhost:3000](http://localhost:3000).
+Runs the app in the development mode.
+Open http://localhost:8080 to view it in the browser.
 
-To learn more about what `create-react-app` offers, you can read
-[its documentation](https://create-react-app.dev/docs/getting-started).
+The page will reload if you make edits.
+You will also see any lint errors in the console.
 
-## Architecture of the Dapp
+### npm run build
 
-This Dapp consists of multiple React Components, which you can find in
-`src/components`.
+Builds a static copy of your site to the `build/` folder.
+Your app is ready to be deployed!
 
-Most of them are presentational components, have no logic, and just render HTML.
+**For the best production performance:** Add a build bundler plugin like "@snowpack/plugin-webpack" to your `snowpack.config.mjs` config file.
 
-The core functionality is implemented in `src/components/Dapp.js`, which has
-examples of how to connect to the user's wallet, initialize your Ethereum
-connection and contracts, read from the contract's state, and send transactions.
+### npm test
 
-You can use the `Dapp` component as a starting point for your project. It has
-comments explaining each part of its code, and indicating what's specific to
-this project, and what can be reused.
-
-## Feedback, help and news
-
-Feel free to reach us through this repository or
-[our Discord server](https://invite.gg/HardhatSupport).
-
-Also you can [follow us on Twitter](https://twitter.com/HardhatHQ).
-
-**Happy _buidling_!**
+Launches the application test runner.
+Run with the `--watch` flag (`npm test -- --watch`) to run in interactive watch mode.

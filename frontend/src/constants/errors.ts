@@ -1,0 +1,1 @@
+export const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
