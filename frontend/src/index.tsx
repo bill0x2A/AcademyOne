@@ -1,20 +1,12 @@
 import React from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ReactDOM from 'react-dom';
 import Dapp from './components/Dapp';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: 'blue',
-    }
-  }
-});
+import { BrowserRouter as Router } from 'react-router-dom';
 
 ReactDOM.render(
-  <ThemeProvider theme={theme}>
+  <Router>
     <Dapp />
-  </ThemeProvider>,
+  </Router>,
   document.getElementById('root'),
 );
 
