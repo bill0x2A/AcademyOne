@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ethers } from 'ethers';
+import { Container, Box } from '@chakra-ui/react';
 import TokenArtifact from '../contracts/Token.json';
 import contractAddress from '../contracts/contract-address.json';
 import NoWalletDetected from './NoWalletDetected';
@@ -222,9 +223,9 @@ const Dapp: React.FC = () => {
     dismiss={dismissNetworkError}/>
 
   return (
-      <div className='container p-4'>
-        <div className='row'>
-          <div className='col-12'>
+      <Container maxW='container.xl' className='container p-4'>
+        <Box className='row'>
+          <Box className='col-12'>
             <h1>
               {tokenData && `${tokenData.name} (${tokenData.symbol})`}
               {tokenData && tokenData.name} ({tokenData && tokenData.symbol})
@@ -236,13 +237,13 @@ const Dapp: React.FC = () => {
               </b>
               .
             </p>
-          </div>
-        </div>
+          </Box>
+        </Box>
 
         <hr />
 
-        <div className='row'>
-          <div className='col-12'>
+        <Box className='row'>
+          <Box className='col-12'>
             {/* 
               Sending a transaction isn't an immidiate action. You have to wait
               for it to be mined.
@@ -262,33 +263,23 @@ const Dapp: React.FC = () => {
                 dismiss={dismissTxError}
               />
             )}
-          </div>
-        </div>
+          </Box>
+        </Box>
 
-        <div className='row'>
-          <div className='col-12'>
-            {/*
-              If the user has no tokens, we don't show the Tranfer form
-            */}
+        <Box className='row'>
+          <Box className='col-12'>
             {balance === 0 && (
               <NoTokensMessage selectedAddress={selectedAddress} />
             )}
-
-            {/*
-              This component displays a form that the user can use to send a 
-              transaction and transfer some tokens.
-              The component doesn't have logic, it just calls the transferTokens
-              callback.
-            */}
             {balance && balance > 0 && (
               <Transfer
                 transferTokens={transferTokens}
                 tokenSymbol={tokenData ? tokenData.symbol : ''}
               />
             )}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Container>
     );
 };
 

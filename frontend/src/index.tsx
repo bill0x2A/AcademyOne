@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Dapp from './components/Dapp';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { ChakraProvider } from '@chakra-ui/react';
+import Dapp from './components/Dapp';
 
 ReactDOM.render(
-  <Router>
-    <Dapp />
-  </Router>,
+  <ChakraProvider>
+    <Router>
+      <Dapp />
+    </Router>
+  </ChakraProvider>,
   document.getElementById('root'),
 );
 
