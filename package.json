@@ -31,5 +31,10 @@
     "ethers": "^5.0.0",
     "hardhat": "^2.0.4",
     "husky": "^4.2.5"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "framer-motion": "^5.6.0"
   }
 }
