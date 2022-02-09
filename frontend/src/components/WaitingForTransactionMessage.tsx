@@ -8,7 +8,7 @@ interface WaitingForTransactionMessageProps {
 const WaitingForTransactionMessage: React.FC<WaitingForTransactionMessageProps> = ({
   txHash
 }: WaitingForTransactionMessageProps) => (
-  <div className='alert alert-info' role='alert'>
+  <div role='alert'>
     Waiting for transaction <strong>{txHash}</strong> to be mined
   </div>
 )

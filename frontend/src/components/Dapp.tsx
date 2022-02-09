@@ -1,18 +1,19 @@
 import * as React from 'react';
 import { ethers } from 'ethers';
 import { Container, Box } from '@chakra-ui/react';
+import { Routes, Route } from 'react-router';
 import TokenArtifact from '../contracts/Token.json';
 import contractAddress from '../contracts/contract-address.json';
 import NoWalletDetected from './NoWalletDetected';
 import ConnectWallet from './ConnectWallet';
-import { Loading } from './Loading';
-import Transfer from './Transfer';
-import TransactionErrorMessage from './TransactionErrorMessage';
-import WaitingForTransactionMessage from './WaitingForTransactionMessage';
-import NoTokensMessage from './NoTokensMessage';
-import type { RPCErrorType } from '../types';
 import { HARDHAT_NETWORK_ID } from '../constants/chain';
-import { ERROR_CODE_TX_REJECTED_BY_USER } from '../constants/errors';
+import { AddressProvider } from '../context/Address';
+import { SignerProvider } from '../context/Signer';
+import { ProviderProvider } from '../context/Provider';
+import { ContractProvider } from '../context/Contract';
+import Home from './pages/Home';
+
+
 
 const Dapp: React.FC = () => {
   const [tokenData, setTokenData] = React.useState<{name: string; symbol: string}>();
@@ -23,6 +24,7 @@ const Dapp: React.FC = () => {
   const [txError, setTxError] = React.useState();
   const [networkError, setNetworkError] = React.useState<string>();
   const [provider, setProvider] = React.useState<ethers.providers.Web3Provider>();
+  const [signer, setSigner] = React.useState<ethers.Signer>();
   const [tokenContract, setTokenContract] = React.useState<ethers.Contract>();
 
   const resetState = () => {
@@ -49,9 +51,8 @@ const Dapp: React.FC = () => {
 
   }
   
-  const getTokenData = async () => {
+  const getTokenData = async (): Promise<void> => {
     if (!tokenContract) return;
-
     const name: string = await tokenContract.name();
     const symbol: string = await tokenContract.symbol();
     setTokenData({
@@ -69,14 +70,6 @@ const Dapp: React.FC = () => {
     return false;
   }
 
-  const getRpcErrorMessage = (error: RPCErrorType): string => {
-    if (error.data) {
-      return error.data.message;
-    }
-
-    return error.message;
-  }
-
   const initializeEthers = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum as any);
     const token = new ethers.Contract(
@@ -85,9 +78,9 @@ const Dapp: React.FC = () => {
       provider.getSigner(0),
     )
 
-    setProvider(provider)
+    setProvider(provider);
+    setSigner(provider.getSigner(0));
     setTokenContract(token);
-
   }
 
   const startPollingData = () => {
@@ -115,7 +108,7 @@ const Dapp: React.FC = () => {
       // list of sites allowed access to your addresses' (Metamask > Settings > Connections)
       // To avoid errors, we reset the dapp state 
       if (newAddress === undefined) {
-        return resetState();
+        return resetState(); // Kind of funky, just stops execution of setSelectedAddress
       }
       
       setSelectedAddress(newAddress);
@@ -131,16 +124,10 @@ const Dapp: React.FC = () => {
   }
 
   const connectWallet = async () => {
-    // This method is run when the user clicks the Connect. It connects the
-    // dapp to the user's wallet, and initializes it.
-
     // To connect to the user's wallet, we have to run this method.
     // It returns a promise that will resolve to the user's address.
     const [selectedAddress] = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
 
-    // Once we have the address, we can initialize the application.
-
-    // First we check the network
     if (!checkNetwork()) {
       return;
     }
@@ -171,50 +158,6 @@ const Dapp: React.FC = () => {
     }
   }, [tokenData]);
 
-  const transferTokens = async (to: string, amount: number) => {
-    // Sending a transaction is a complex operation:
-    //   - The user can reject it
-    //   - It can fail before reaching the ethereum network.
-    //   - It has to be mined, so it isn't immediately confirmed.
-    //   - It can fail once mined.
-
-    try {
-
-      dismissTxError();
-
-      if (!!tokenContract) {
-        const tx = await tokenContract.transfer(to, amount);
-        setTxBeingSent(tx.hash);
-  
-        const receipt = await tx.wait();
-
-        if (receipt.status === 0) {
-          // We can't know the exact error that made the transaction fail when it
-          // was mined, so we throw this generic one.
-          throw new Error('Transaction failed');
-        }
-
-        await updateBalance();
-      }
-
-    } catch (error: any) {
-      // We check the error code to see if this error was produced because the
-      // user rejected a tx. If that's the case, we do nothing.
-      if (error.code === ERROR_CODE_TX_REJECTED_BY_USER) {
-        return;
-      }
-
-      // Other errors are logged and stored in the Dapp's state. This is used to
-      // show them to the user, and for debugging.
-      console.error(error);
-      setTxError(error);
-    } finally {
-      // If we leave the try/catch, we aren't sending a tx anymore, so we clear
-      // this part of the state.
-      setTxBeingSent(undefined);
-    }
-  }
-
   if (window.ethereum === undefined) return <NoWalletDetected/>
 
   if (!selectedAddress) return <ConnectWallet
@@ -223,63 +166,19 @@ const Dapp: React.FC = () => {
     dismiss={dismissNetworkError}/>
 
   return (
-      <Container maxW='container.xl' className='container p-4'>
-        <Box className='row'>
-          <Box className='col-12'>
-            <h1>
-              {tokenData && `${tokenData.name} (${tokenData.symbol})`}
-              {tokenData && tokenData.name} ({tokenData && tokenData.symbol})
-            </h1>
-            <p>
-              Welcome <b>{selectedAddress}</b>, you have{' '}
-              <b>
-                {balance && balance.toString()} {tokenData && tokenData.symbol}
-              </b>
-              .
-            </p>
-          </Box>
-        </Box>
-
-        <hr />
-
-        <Box className='row'>
-          <Box className='col-12'>
-            {/* 
-              Sending a transaction isn't an immidiate action. You have to wait
-              for it to be mined.
-              If we are waiting for one, we show a message here.
-            */}
-            {txBeingSent && (
-              <WaitingForTransactionMessage txHash={txBeingSent} />
-            )}
-
-            {/* 
-              Sending a transaction can fail in multiple ways. 
-              If that happened, we show a message here.
-            */}
-            {txError && (
-              <TransactionErrorMessage
-                message={getRpcErrorMessage(txError)}
-                dismiss={dismissTxError}
-              />
-            )}
-          </Box>
-        </Box>
-
-        <Box className='row'>
-          <Box className='col-12'>
-            {balance === 0 && (
-              <NoTokensMessage selectedAddress={selectedAddress} />
-            )}
-            {balance && balance > 0 && (
-              <Transfer
-                transferTokens={transferTokens}
-                tokenSymbol={tokenData ? tokenData.symbol : ''}
-              />
-            )}
-          </Box>
-        </Box>
-      </Container>
+    <ProviderProvider value={provider}>
+      <SignerProvider value={signer}>
+        <ContractProvider value={tokenContract}>
+          <AddressProvider value={selectedAddress}>
+            <Routes>
+              <Route path='/'>
+                <Home/>
+                </Route>
+              </Routes>
+            </AddressProvider>
+          </ContractProvider>
+        </SignerProvider>
+      </ProviderProvider>
     );
 };
 
