@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useContract } from 'src/context/Contract';
-import { useAddress } from 'src/context/Address';
+import { useContract } from '../../context/Contract';
+import { useAddress } from '../../context/Address';
 
 const Home: React.FC = () => {
     const contract = useContract();

@@ -171,14 +171,12 @@ const Dapp: React.FC = () => {
         <ContractProvider value={tokenContract}>
           <AddressProvider value={selectedAddress}>
             <Routes>
-              <Route path='/'>
-                <Home/>
-                </Route>
-              </Routes>
-            </AddressProvider>
-          </ContractProvider>
-        </SignerProvider>
-      </ProviderProvider>
+              <Route path='/' element={<Home/>}/>
+            </Routes>
+          </AddressProvider>
+        </ContractProvider>
+      </SignerProvider>
+    </ProviderProvider>
     );
 };
 
