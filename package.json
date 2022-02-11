@@ -35,5 +35,7 @@
     "husky": "^4.2.5"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^1.1.5",
+    "@snowpack/plugin-sass": "^1.4.0"
   }
 }

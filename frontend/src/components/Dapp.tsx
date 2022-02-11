@@ -13,8 +13,6 @@ import { ProviderProvider } from '../context/Provider';
 import { ContractProvider } from '../context/Contract';
 import Home from './pages/Home';
 
-
-
 const Dapp: React.FC = () => {
   const [tokenData, setTokenData] = React.useState<{name: string; symbol: string}>();
   const [pollDataInterval, setPollDataInterval] = React.useState<any>();
