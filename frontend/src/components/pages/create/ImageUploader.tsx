@@ -1,18 +1,29 @@
 import { useState } from 'react';
 import {
     Button,
-    Box,
+    Center,
     Text,
     Image,
     Flex,
 } from '@chakra-ui/react';
+import { usePrevious } from '../../../hooks';
 import StorageClient from '../../web3/StorageClient';
 
-const DropArea: React.FC = () => {
+interface ImageUploaderProps {
+    setImageURL: (imageURL: string) => void;
+    imageURL: string | undefined;
+}
+
+const ImageUploader: React.FC<ImageUploaderProps> = ({
+    setImageURL,
+    imageURL,
+}: ImageUploaderProps) => {
     const [data, setData] = useState<ArrayBuffer | string | null | undefined>(null);
     const [err, setErr] = useState<string | boolean>(false);
     const [file, setFile] = useState<File | null>(null);
-    const [imageURI, setImageURI] = useState<string | null>(null);
+    const [isUploadingToIPFS, setIsUploadingToIPFS] = useState<boolean>(false);
+    const wasUploadingToIPFS = usePrevious(isUploadingToIPFS);
+    const successfullyUploadedToIPFS = wasUploadingToIPFS && !!imageURL;
 
     const onDrop = (e: React.DragEvent) => {
         e.preventDefault();
@@ -47,30 +58,34 @@ const DropArea: React.FC = () => {
     }
 
     const uploadImage = async () => {
+        setIsUploadingToIPFS(true);
         const newImageURI = await new StorageClient().storeFiles(file);
-        console.log(newImageURI);
-        setImageURI(newImageURI);
+        setImageURL(newImageURI);
+        setIsUploadingToIPFS(false);
     }
 
     return (
         <>
-            <Box 
+            <Center
+                border={'2px dashed'}
+                py={100}
                 onDragOver={e=> e.preventDefault()}
                 onDrop={e => onDrop(e)}>
-                    {data !== null && <Image src={data?.toString()}/>}
-                    {data === null && (
-                        <Text>Drag and drop image</Text>
+                    {(imageURL || data !== null) && <Image src={imageURL || data?.toString()}/>}
+                    {( data === null && !imageURL )&& (
+                        <Text>Drag and drop cover image</Text>
                     )}
-            </Box> 
+            </Center> 
             {err && <Text>Unable to upload image</Text>}
-            {data!==null && (
+            {data!==null && !successfullyUploadedToIPFS && (
                 <Flex>
                     <Button onClick={()=>setData(null)}>Remove Image</Button>
-                    <Button onClick={uploadImage}>Upload Image</Button>
+                    <Button isLoading={isUploadingToIPFS} onClick={uploadImage}>Upload Image</Button>
                 </Flex>
             )}
+            {successfullyUploadedToIPFS && <Text>Successfully uploaded to IPFS!</Text>}
         </>
     )
 }
 
-export default DropArea;
+export default ImageUploader;

@@ -9,13 +9,14 @@ import {
     FormControl,
     FormHelperText,
 } from '@chakra-ui/react';
-import FileUpload from './FileUpload';
+import ImageUploader from './ImageUploader';
 import { useNavigate } from 'react-router';
 
 const Create: React.FC = () => {
 
     const [title, setTitle] = React.useState<string>();
     const [desc, setDesc] = React.useState<string>();
+    const [imageURL, setImageURL] = React.useState<string>();
 
     const navigate = useNavigate();
     const signer = useSigner();
@@ -57,7 +58,7 @@ const Create: React.FC = () => {
                 onChange={(e) => handleChange(setDesc, e)}/>
                 <FormHelperText>Add a short description of this course so students know what they're getting into!</FormHelperText>
         </FormControl>
-        <FileUpload/>
+        <ImageUploader imageURL={imageURL} setImageURL={setImageURL}/>
     </Container>
 }
 
