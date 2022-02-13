@@ -1,17 +1,21 @@
 import * as React from 'react';
 import { ethers } from 'ethers';
-import { Container, Box } from '@chakra-ui/react';
+import { Web3Storage } from 'web3.storage'
 import { Routes, Route } from 'react-router';
 import TokenArtifact from '../contracts/Token.json';
 import contractAddress from '../contracts/contract-address.json';
 import NoWalletDetected from './NoWalletDetected';
-import ConnectWallet from './ConnectWallet';
 import { HARDHAT_NETWORK_ID } from '../constants/chain';
 import { AddressProvider } from '../context/Address';
 import { SignerProvider } from '../context/Signer';
 import { ProviderProvider } from '../context/Provider';
 import { ContractProvider } from '../context/Contract';
+import { StorageProvider } from'../context/Storage';
+import Navigation from './navigation/Navigation';
 import Home from './pages/Home';
+import { CustomWindow } from '../types';
+
+declare let window: CustomWindow;
 
 const Dapp: React.FC = () => {
   const [tokenData, setTokenData] = React.useState<{name: string; symbol: string}>();
@@ -24,6 +28,9 @@ const Dapp: React.FC = () => {
   const [provider, setProvider] = React.useState<ethers.providers.Web3Provider>();
   const [signer, setSigner] = React.useState<ethers.Signer>();
   const [tokenContract, setTokenContract] = React.useState<ethers.Contract>();
+
+  const web3StorageAPIKey = process.env.SNOWPACK_PUBLIC_STORAGE_API_KEY || '';
+  const storage = new Web3Storage({ token: web3StorageAPIKey })
 
   const resetState = () => {
     console.log('resetting state');
@@ -158,19 +165,19 @@ const Dapp: React.FC = () => {
 
   if (window.ethereum === undefined) return <NoWalletDetected/>
 
-  if (!selectedAddress) return <ConnectWallet
-    connectWallet={connectWallet}
-    networkError={networkError}
-    dismiss={dismissNetworkError}/>
-
   return (
     <ProviderProvider value={provider}>
       <SignerProvider value={signer}>
         <ContractProvider value={tokenContract}>
           <AddressProvider value={selectedAddress}>
-            <Routes>
-              <Route path='/' element={<Home/>}/>
-            </Routes>
+            <StorageProvider value={storage}>
+              <>
+                <Navigation connectWallet={connectWallet}/>
+                <Routes>
+                  <Route path='/' element={<Home/>}/>
+                </Routes>
+              </>
+            </StorageProvider>
           </AddressProvider>
         </ContractProvider>
       </SignerProvider>
