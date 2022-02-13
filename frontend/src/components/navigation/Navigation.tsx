@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Identicon from 'react-identicons';
-import { Navigate, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import {
   Box,
   Flex,
@@ -21,6 +21,7 @@ import { useAddress } from '../../context/Address';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { GiSpellBook } from 'react-icons/gi';
 import ConnectWallet from './ConnectWallet';
+import UserDisplay from '../ui/UserDisplay';
 import styles from './Navigation.module.sass';
 
 const NavLink = ({ children, path }: { children: React.ReactNode, path: string }) => {
@@ -90,12 +91,12 @@ const Nav: React.FC<NavProps> = ({
                     variant={'link'}
                     cursor={'pointer'}
                     minW={0}>
-                    <Identicon size={32} string={address}/>
+                    <UserDisplay address={address}/>
                   </MenuButton>
                   <MenuList alignItems={'center'}>
                     <br />
                     <Center>
-                      <Identicon string={address} size={100} background={'white'}></Identicon>
+                      <Identicon string={address} size={100} styles={{background: 'white'}}></Identicon>
                     </Center>
                     <br />
                     <Center>
