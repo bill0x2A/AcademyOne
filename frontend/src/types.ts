@@ -8,6 +8,14 @@ export interface RPCErrorType {
     };
 }
 
+export interface CourseSummary {
+    imageURL: string;
+    name: string;
+    description: string;
+    author: string;
+    address: string;
+}
+
 export interface CustomWindow extends Window {
     ethereum: MetaMaskInpageProvider;
 }

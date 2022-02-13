@@ -12,7 +12,9 @@ import { ProviderProvider } from '../context/Provider';
 import { ContractProvider } from '../context/Contract';
 import { StorageProvider } from'../context/Storage';
 import Navigation from './navigation/Navigation';
-import Home from './pages/Home';
+import Home from './pages/home/Home';
+import Courses from './pages/courses/Courses';
+import Course from './pages/course/CourseHomepage';
 import { CustomWindow } from '../types';
 
 declare let window: CustomWindow;
@@ -175,6 +177,8 @@ const Dapp: React.FC = () => {
                 <Navigation connectWallet={connectWallet}/>
                 <Routes>
                   <Route path='/' element={<Home/>}/>
+                  <Route path='/courses/:courseAddress' element={<Course/>}/>
+                  <Route path='/courses' element={<Courses/>}/>
                 </Routes>
               </>
             </StorageProvider>
