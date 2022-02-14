@@ -8,5 +8,5 @@ export const useCourseFactory = (
 ) => {
     const signer = useSigner();
     const provider = useProvider();
-    return new ethers.Contract(address, CollegeContractABI, signer || provider);
+    return null; // new ethers.Contract(address, CourseFactoryABI, signer || provider);
 }
