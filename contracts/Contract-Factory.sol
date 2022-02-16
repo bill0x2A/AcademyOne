@@ -2,7 +2,7 @@
 
 // SPDX-License-Identifier: GPL-3.0
 
-import"./Course-Contract.sol";
+import "./Course-Contract.sol"; 
 
 pragma solidity >=0.7.0 <0.9.0;
 
