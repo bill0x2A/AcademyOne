@@ -1,29 +1,9 @@
 // contract testing
 
 // SPDX-License-Identifier: GPL-3.0
-
 pragma solidity >=0.7.0 <0.9.0;
 
-contract CourseFactory {
 
-    //Init the array of deployed contract addresses
-    address[] public deployedCourses;
-
-    function createCourse (string memory name, string memory description, string memory imageHash,
-    string[] memory moduleNames, string[] memory moduleDescriptions,
-    string[] memory materialHashes, string[] memory questionHashes) 
-    public {
-        //creates a new course, deploys a new course contract and pushes its address onto the address array
-        CourseContract newCourse = new CourseContract(name, description, imageHash,
-        moduleNames, moduleDescriptions, materialHashes, questionHashes);
-        deployedCourses.push(address(newCourse));
-    }
-
-    function getDeployedCourses() public view returns (address[] memory) {
-        //returns the full array on deployed contracts
-        return deployedCourses;
-    }    
-}
 
 contract CourseContract {
 
@@ -37,7 +17,6 @@ contract CourseContract {
         string newQuestionsHash;
     }
 
-
     struct Module {
         string name;
         string description;
@@ -45,8 +24,6 @@ contract CourseContract {
         string materialsHash;
         string questionsHash;
     }
-
-
 
     struct Request {
         string name;
@@ -57,11 +34,11 @@ contract CourseContract {
         address approver;
     }
 
-
     Edit[] public editModules;
     Module[] public modules;
     Module[] public newModules;
     Request[] public requests;
+    mapping(uint=>Module[]) moduleVersion;
     mapping(uint=>Module[]) moduleKey;
     mapping(uint=>Edit[]) editKey;
     mapping(address=>bool) public members;
@@ -111,11 +88,17 @@ contract CourseContract {
     }
 
 
-    function createRequest
-    (string memory _nameReq, string memory _descriptionReq,
-    string[] memory _nameMod, string[] memory _descriptionMod,
-    string[] memory _mHashMod, string[] memory _qHashMod,
-    uint[] memory _targetID, string[] memory _qHash, string[] memory _mHash) public {
+    function createRequest(
+        string memory _nameReq,
+        string memory _descriptionReq,
+        string[] memory _nameMod,
+        string[] memory _descriptionMod,
+        string[] memory _mHashMod,
+        string[] memory _qHashMod,
+        uint[] memory _targetID,
+        string[] memory _qHash,
+        string[] memory _mHash
+    ) public {
 
         author = msg.sender;
         
@@ -223,7 +206,7 @@ contract CourseContract {
 
         //add a signal here for error message?
         approveModules(_index);
-        approveEdits(_index);
+        //approveEdits(_index);
 
         request.approver = msg.sender;
         request.confirmed = true;
@@ -237,6 +220,7 @@ contract CourseContract {
         for (uint i = 0; i < modulesArray.length; i++) {
             modules.push(modulesArray[i]);
         }
+        moduleVersion[index] = modules;
     }
 
     function approveEdits(uint ID) public restricted {
@@ -282,5 +266,28 @@ contract CourseContract {
         delete newModules;
         approveModules(index);
         index++;
+    }
+
+    function returnModules(uint _version) public view returns(string[] memory _name, string[] memory _desc,
+    address[] memory _author, string[] memory _materials, string[] memory questions) {
+
+        Module[] memory currentModules = moduleVersion[_version];
+
+        string[] memory names = new string[](currentModules.length);
+        string[] memory descriptions = new string[](currentModules.length);
+        address[] memory authors = new address[](currentModules.length);
+        string[] memory mHashes = new string[](currentModules.length);
+        string[] memory qHashes = new string[](currentModules.length);
+
+        for (uint i = 0; i < currentModules.length; i++) {
+            Module memory mod = currentModules[i];
+            names[i] = mod.name;
+            descriptions[i] = mod.description;
+            authors[i] = mod.author;
+            mHashes[i] = mod.materialsHash;
+            qHashes[i] = mod.questionsHash;
+        }
+
+        return(names,descriptions,authors,mHashes,qHashes);
     }
 }
