@@ -91,6 +91,7 @@ contract CourseContract {
     }
 
     function pushModules(
+        //takes in arrays of module detailes, pushes them onto an array and stores that array in version controlled modules mapping.
         string[] memory _name,
         string[] memory _description,
         string[] memory _mHash,
@@ -114,6 +115,8 @@ contract CourseContract {
 
     function returnModules(uint _version) public view 
     returns(
+        //returns all of the modules stored in version controlled modules mapping at _version
+        //returns as an array of names, descs,materials,and questions.
         string[] memory _name,
         string[] memory _desc,
         string[] memory _materials,
@@ -139,6 +142,8 @@ contract CourseContract {
     }
 
     function createRequest(
+        //creates a request with all of the modules, including past modules, edited modules and new modules.
+        //array of modules are stored at request index in request modules mappings.
         string memory _nameReq,
         string memory _descriptionReq,
         string[] memory _moduleNames,
@@ -174,6 +179,9 @@ contract CourseContract {
     }
 
     function approveRequest(uint ID) public restricted{
+        //Approves a request at index ID in list of requests array,
+        //changes the approver address and confirmed boolean,
+        //pushes all the new modules stored in request module mapping, into current modules array mapping.
         Request storage request = listOfRequests[ID];
         request.confirmed = true;
         request.approver = msg.sender;
@@ -201,5 +209,6 @@ contract CourseContract {
     function returnRequests(uint ID) public view returns(string memory name){
 
     // To write
+
     }
 }
