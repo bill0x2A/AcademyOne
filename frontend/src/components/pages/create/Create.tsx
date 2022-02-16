@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router';
 import { useSigner } from '../../../context/Signer';
 import { useAddress } from '../../../context/Address';
+import { usePrevious } from '../../../hooks';
 import {
     Container,
     Heading,
@@ -13,8 +14,7 @@ import GeneralInformation from './GeneralInformation';
 import AddModules from './AddModules';
 import StorageClient from '../../web3/StorageClient';
 import { FrontendModule, MarkdownData } from '../../../types';
-import 'react-markdown-editor-lite/lib/index.css'
-import _ from 'lodash';
+import 'react-markdown-editor-lite/lib/index.css';
 
 
 const Create: React.FC = () => {
@@ -23,11 +23,14 @@ const Create: React.FC = () => {
     const [description, setDescription] = React.useState<string>();
     const [imageURL, setImageURL] = React.useState<string>();
     const [stage, setStage] = React.useState<number>(0);
+    const [isCreating, setIsCreating] = React.useState<boolean>(false);
+    const wasCreating = usePrevious(isCreating);
     const address = useAddress();
 
     const shouldAllowNavigationToStage2 = stage === 0 && ((!!description && !!title && !!imageURL) || true); // TEMP! REMOVE ME!
     const shouldShowBackButton = stage > 0;
-    const shouldShowCreateButton = stage === 1;
+    const creationSucessfull = wasCreating && !isCreating;
+    const shouldShowCreateButton = stage === 1 && !wasCreating;
 
     const navigate = useNavigate();
     const signer = useSigner();
@@ -134,8 +137,10 @@ const Create: React.FC = () => {
     };
 
     const createCourse = async () => {
+        setIsCreating(true);
         const data = await processModuleData();
-        console.log(data);
+        // Contract interaction
+        setIsCreating(false);
     }
 
     let subpage;
@@ -178,6 +183,7 @@ const Create: React.FC = () => {
                     onClick={() => setStage((stage) => stage - 1)}>
                     Back</Button>}
                 {shouldShowCreateButton && <Button
+                    isLoading={isCreating}
                     onClick={createCourse}
                     colorScheme={'green'}
                     >Create</Button>}
