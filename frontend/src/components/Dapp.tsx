@@ -30,7 +30,6 @@ const Dapp: React.FC = () => {
   const [networkError, setNetworkError] = React.useState<string>();
   const [provider, setProvider] = React.useState<ethers.providers.Web3Provider>();
   const [signer, setSigner] = React.useState<ethers.Signer>();
-  const [tokenContract, setTokenContract] = React.useState<ethers.Contract>();
 
   const web3StorageAPIKey = process.env.SNOWPACK_PUBLIC_STORAGE_API_KEY || '';
   const storage = new Web3Storage({ token: web3StorageAPIKey })
@@ -44,29 +43,6 @@ const Dapp: React.FC = () => {
     setTxError(undefined);
     setNetworkError(undefined);
     setProvider(undefined);
-    setTokenContract(undefined);
-  }
-
-  const updateBalance = async () => {
-    if (!tokenContract) return;
-
-    try {
-      const balance: number = await tokenContract.balanceOf(selectedAddress);
-      setBalance(balance);
-    } catch (error) {
-      console.error(error);
-    }
-
-  }
-  
-  const getTokenData = async (): Promise<void> => {
-    if (!tokenContract) return;
-    const name: string = await tokenContract.name();
-    const symbol: string = await tokenContract.symbol();
-    setTokenData({
-      name,
-      symbol,
-    });
   }
 
   const checkNetwork = () => {
@@ -80,24 +56,8 @@ const Dapp: React.FC = () => {
 
   const initializeEthers = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-    const token = new ethers.Contract(
-      contractAddress.Token,
-      TokenArtifact.abi,
-      provider.getSigner(0),
-    )
-
     setProvider(provider);
     setSigner(provider.getSigner(0));
-    setTokenContract(token);
-  }
-
-  const startPollingData = () => {
-    setPollDataInterval(setInterval(() => updateBalance(), 10000))
-    updateBalance();
-  }
-
-  const stopPollingData = () => {
-    clearInterval(pollDataInterval);
   }
 
   const dismissNetworkError = () => {
@@ -110,7 +70,6 @@ const Dapp: React.FC = () => {
 
   const listenForAccountChange = (): void => {
     window.ethereum.on('accountsChanged', ([newAddress]: any) => {
-      stopPollingData();
       // `accountsChanged` event can be triggered with an undefined newAddress.
       // This happens when the user removes the Dapp from the 'Connected
       // list of sites allowed access to your addresses' (Metamask > Settings > Connections)
@@ -126,7 +85,6 @@ const Dapp: React.FC = () => {
   const listenForNetworkChange = ():void => {
     // We reset the dapp state if the network is changed
     window.ethereum.on('networkChanged', () => {
-      stopPollingData();
       resetState();
     });
   }
@@ -154,27 +112,13 @@ const Dapp: React.FC = () => {
     }
   }, [selectedAddress])
 
-  React.useEffect(() => {
-    if (!!tokenContract) {
-      getTokenData();
-    }
-  }, [tokenContract])
-
-  React.useEffect(() => {
-    if (!!tokenData) {
-      startPollingData();
-    }
-  }, [tokenData]);
-
   if (window.ethereum === undefined) return <NoWalletDetected/>
 
   return (
     <ProviderProvider value={provider}>
       <SignerProvider value={signer}>
-        <ContractProvider value={tokenContract}>
           <AddressProvider value={selectedAddress}>
             <StorageProvider value={storage}>
-              <>
                 <Navigation connectWallet={connectWallet}/>
                 <Routes>
                   <Route path='/' element={<Home/>}/>
@@ -182,10 +126,8 @@ const Dapp: React.FC = () => {
                   <Route path='/courses' element={<Courses/>}/>
                   <Route path='/create' element={<Create/>}/>
                 </Routes>
-              </>
             </StorageProvider>
           </AddressProvider>
-        </ContractProvider>
       </SignerProvider>
     </ProviderProvider>
     );

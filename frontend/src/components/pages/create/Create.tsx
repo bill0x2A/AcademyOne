@@ -3,12 +3,14 @@ import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router';
 import { useSigner } from '../../../context/Signer';
 import { useAddress } from '../../../context/Address';
+import { useCourseFactory } from '../../web3/useCourseFactoryContract';
 import { usePrevious } from '../../../hooks';
 import {
     Container,
     Heading,
     Button,
     Flex,
+    Text,
 } from '@chakra-ui/react';
 import GeneralInformation from './GeneralInformation';
 import AddModules from './AddModules';
@@ -26,11 +28,12 @@ const Create: React.FC = () => {
     const [isCreating, setIsCreating] = React.useState<boolean>(false);
     const wasCreating = usePrevious(isCreating);
     const address = useAddress();
+    const contract = useCourseFactory('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512');
 
     const shouldAllowNavigationToStage2 = stage === 0 && ((!!description && !!title && !!imageURL) || true); // TEMP! REMOVE ME!
     const shouldShowBackButton = stage > 0;
-    const creationSucessfull = wasCreating && !isCreating;
-    const shouldShowCreateButton = stage === 1 && !wasCreating;
+    const creationSucessful = wasCreating && !isCreating;
+    const shouldShowCreateButton = stage === 1 && !creationSucessful;
 
     const navigate = useNavigate();
     const signer = useSigner();
@@ -57,16 +60,15 @@ const Create: React.FC = () => {
         let descriptions: string[] = [];
         let materials: string[] = [];
         let questions: string[] = [];
-
-        modules.forEach(async (module) => {
+        for(const module of modules) {
             names.push(module.name);
             descriptions.push(module.description);
             const materialsURL = await uploadMarkdownData(module.materials.text);
             const questionsURL = await uploadMarkdownData(module.questions.text);
             materials.push(materialsURL);
             questions.push(questionsURL);
-        });
-        return({names, description, materials, questions});
+        }
+        return({names, descriptions, materials, questions});
     }
 
     const getModuleIndex = (id: string): number => {
@@ -138,8 +140,22 @@ const Create: React.FC = () => {
 
     const createCourse = async () => {
         setIsCreating(true);
-        const data = await processModuleData();
-        // Contract interaction
+        const {
+            names,
+            descriptions,
+            materials,
+            questions,
+        } = await processModuleData();
+        const tx = await contract.createCourse(
+            title,
+            description,
+            imageURL,
+            names,
+            descriptions,
+            materials,
+            questions,
+        );
+        console.log(tx);
         setIsCreating(false);
     }
 
@@ -187,6 +203,7 @@ const Create: React.FC = () => {
                     onClick={createCourse}
                     colorScheme={'green'}
                     >Create</Button>}
+                {creationSucessful && <Text color={'green.500'}>Success!!! (I think)</Text>}
             </Flex>
     </Container>;
 }
