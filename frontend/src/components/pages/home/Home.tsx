@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
     Button,
 } from '@chakra-ui/react';
-import { useCourseContract } from '../../web3/useCourse';
 import { useCourseFactory } from '../../web3/useCourseFactoryContract';
 import { Container } from '@chakra-ui/react';
 import { useAddress } from '../../../context/Address';
@@ -20,7 +19,7 @@ const Home: React.FC = () => {
 
     return <Container maxW={'1280px'}>
         <Hero/>
-        <Button onClick={testContract}></Button>
+        <Button onClick={testContract}>Test</Button>
     </Container>
 };
 

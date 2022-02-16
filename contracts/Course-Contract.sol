@@ -72,6 +72,20 @@ contract CourseContract {
         addInitialModules(moduleNames, moduleDescriptions, materialHashes, questionHashes);
     }
 
+    function getSummaryInformation() public view returns (
+        string memory,
+        string memory,
+        string memory,
+        address
+    ){
+        return(
+            courseName,
+            courseDescription,
+            courseImageHash,
+            manager
+        );
+    }
+
     function addMaintainer(address newMaintainer) public restricted() {
         require(maintainers[newMaintainer] != true);
         //Add a signal here to tell Ux that this address is already a maintainer

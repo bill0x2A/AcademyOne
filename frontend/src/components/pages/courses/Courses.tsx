@@ -5,47 +5,35 @@ import {
     Grid,
 } from "@chakra-ui/react";
 import Course from './Course';
+import { useSigner } from '../../../context/Signer';
+import { useProvider } from '../../../context/Provider';
+import { getCourse } from '../../web3/getCourse';
+import { useCourseFactory } from '../../web3/useCourseFactoryContract';
 import { CourseSummary } from '../../../types';
 
-const fakeCourses: CourseSummary[] = [
-    {
-        imageURL: 'https://i0.wp.com/www.garage-bar.co.uk/wp-content/uploads/Carling-Beer-Interlocking-Pint-Glass.jpg',
-        name: 'Drinking wee',
-        description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla deleniti, quis tempore dolores odio perferendis libero soluta quibusdam. Sequi, sit.',
-        author: '0x829y1nd028ha029pjcp9wcjpjwc',
-        address: '0xoihawfihw',
-    },
-    {
-        imageURL: 'https://i0.wp.com/www.garage-bar.co.uk/wp-content/uploads/Carling-Beer-Interlocking-Pint-Glass.jpg',
-        name: 'Drinking wee',
-        description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla deleniti, quis tempore dolores odio perferendis libero soluta quibusdam. Sequi, sit.',
-        author: '0x829y1nd028ha029pjcp9wcjpjwc',
-        address: '0xoihawfihw',
-    },
-    {
-        imageURL: 'https://i0.wp.com/www.garage-bar.co.uk/wp-content/uploads/Carling-Beer-Interlocking-Pint-Glass.jpg',
-        name: 'Drinking wee',
-        description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla deleniti, quis tempore dolores odio perferendis libero soluta quibusdam. Sequi, sit.',
-        author: '0x829y1nd028ha029pjcp9wcjpjwc',
-        address: '0xoihawfihw',
-    },
-    {
-        imageURL: 'https://i0.wp.com/www.garage-bar.co.uk/wp-content/uploads/Carling-Beer-Interlocking-Pint-Glass.jpg',
-        name: 'Drinking wee',
-        description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla deleniti, quis tempore dolores odio perferendis libero soluta quibusdam. Sequi, sit.',
-        author: '0x829y1nd028ha029pjcp9wcjpjwc',
-        address: '0xoihawfihw',
-    },
-    {
-        imageURL: 'https://i0.wp.com/www.garage-bar.co.uk/wp-content/uploads/Carling-Beer-Interlocking-Pint-Glass.jpg',
-        name: 'Drinking wee',
-        description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla deleniti, quis tempore dolores odio perferendis libero soluta quibusdam. Sequi, sit.',
-        author: '0x829y1nd028ha029pjcp9wcjpjwc',
-        address: '0xoihawfihw',
-    },
-]
-
 const Courses = () => {
+    const courseFactory = useCourseFactory('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512');
+    const [courseAddresses, setCourseAddresses] = React.useState<string[]>([]);
+
+    const getCourseAddresses = async (): Promise<void> => {
+        const courseAddrs = await courseFactory.getDeployedCourses();
+        setCourseAddresses(courseAddrs);
+    };
+
+    const getCourseInfo = async (address: string): Promise<any> => {
+        const course = getCourse(address, );
+    };
+
+    React.useEffect(() => {
+        getCourseAddresses();
+    }, []);
+
+    React.useEffect(() => {
+        if (courseAddresses.length > 0) {
+
+        }
+    }, [courseAddresses]);
+
     return <Container maxW={'1280px'} my={10}>
         <Heading>
             Courses
