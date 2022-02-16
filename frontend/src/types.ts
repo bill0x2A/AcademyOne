@@ -24,7 +24,6 @@ export interface MarkdownData {
 export interface Module {
     name: string;
     description: string;
-    author: string;
     materialsHash: string;
     questionsHash: string;
 }

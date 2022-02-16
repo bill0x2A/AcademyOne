@@ -9,31 +9,69 @@ import {
     Box,
 } from '@chakra-ui/react';
 import UserDisplay from '../../ui/UserDisplay';
-import { CourseSummary } from '../../../types';
+import { useCourseContract } from '../../web3/useCourse'
+import { useParams } from 'react-router';
+import { CourseSummary, Module } from '../../../types';
 import Enroll from '../../web3/Enroll';
+import ModulePreview from './ModulePreview';
 
-interface CourseHomepageProps {
-    courseSummary?: CourseSummary;
-}
+const CourseHomepage: React.FC = () => {
 
-const fakeCourse = {
-    imageURL: 'https://i0.wp.com/www.garage-bar.co.uk/wp-content/uploads/Carling-Beer-Interlocking-Pint-Glass.jpg',
-    name: 'Drinking wee',
-    description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla deleniti, quis tempore dolores odio perferendis libero soluta quibusdam. Sequi, sit.',
-    author: '0x829y1nd028ha029pjcp9wcjpjwc',
-    address: '0xoihawfihw',
-};
+    const [courseSummary, setCourseSummary] = React.useState<CourseSummary>({
+        name: '',
+        description: '',
+        imageURL: '',
+        author: '',
+        address: '',
+    });
+    const [modules, setModules] = React.useState<Module[]>([]);
 
-const CourseHomepage: React.FC<CourseHomepageProps> = ({
-    courseSummary = fakeCourse,
-}: CourseHomepageProps) => {
+    const { courseAddress } = useParams();
+    const contract = useCourseContract(courseAddress || '0x0');
+
+    const getCourseSummary = async (): Promise<void> => {
+        const [
+            name,
+            description,
+            imageURL,
+            author
+        ] = await contract.getSummaryInformation();
+        setCourseSummary({
+            name,
+            description,
+            imageURL,
+            author,
+            address: courseAddress || '0x0',
+        });
+    };
+
+    const getModules = async (): Promise<void> => {
+        const modulesToReturn: Module[] = []
+        const [names, descriptions, materials, questions] = await contract.returnModules();
+        for(let i=0; i < names.length; i++) {
+            const module = {
+                name: names[i],
+                description: descriptions[i],
+                materialsHash: materials[i],
+                questionsHash: questions[i],
+            }
+            modulesToReturn.push(module);
+        }
+        setModules(modulesToReturn);
+    };
+
+    React.useEffect(() => {
+        getCourseSummary();
+        getModules();
+    }, []);
+
     const {
         name,
         description,
         imageURL,
-        address,
         author,
     } = courseSummary;
+
     return <Container maxW={'1280px'} pb={20}>
         <Flex justifyContent={'space-between'} py={8}>
             <Heading>{name}</Heading>
@@ -46,7 +84,10 @@ const CourseHomepage: React.FC<CourseHomepageProps> = ({
             <Image src={imageURL} objectFit={'fill'}/>
         </Box>
         <Text mb={10}>{description}</Text>
-        <Enroll courseAddress={address}/>
+        <Heading>Modules</Heading>
+        <hr/>
+        {modules.map((module) => <ModulePreview module={module}/>)}
+        <Enroll courseAddress={courseAddress || '0x0'}/>
     </Container>
 }
 

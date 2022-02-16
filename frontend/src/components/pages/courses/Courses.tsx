@@ -3,6 +3,7 @@ import {
     Container,
     Heading,
     Grid,
+    Spinner,
 } from "@chakra-ui/react";
 import Course from './Course';
 import { useSigner } from '../../../context/Signer';
@@ -10,18 +11,43 @@ import { useProvider } from '../../../context/Provider';
 import { getCourse } from '../../web3/getCourse';
 import { useCourseFactory } from '../../web3/useCourseFactoryContract';
 import { CourseSummary } from '../../../types';
+import { FACTORY_ADDRESS } from '../../../constants/chain';
 
-const Courses = () => {
-    const courseFactory = useCourseFactory('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512');
+const Courses: React.FC = () => {
+    const courseFactory = useCourseFactory(FACTORY_ADDRESS);
+    const provider = useProvider();
+    const signer = useSigner();
     const [courseAddresses, setCourseAddresses] = React.useState<string[]>([]);
+    const [courses, setCourses] = React.useState<CourseSummary[]>([]);
+    
+    const shouldShowCoursesLoading = courses.length === 0;
 
     const getCourseAddresses = async (): Promise<void> => {
         const courseAddrs = await courseFactory.getDeployedCourses();
+        console.log(courseAddrs);
         setCourseAddresses(courseAddrs);
     };
 
-    const getCourseInfo = async (address: string): Promise<any> => {
-        const course = getCourse(address, );
+    const getCourseInfo = async (address: string): Promise<CourseSummary> => {
+            const course = getCourse(address, signer || provider);
+            const courseInformation  = await course.getSummaryInfomation();
+            const [name, description, imageURL, author] = courseInformation;
+            return {
+                name,
+                description,
+                imageURL,
+                author,
+                address,
+            };
+    };
+
+    const getCourseSummaries = async (): Promise<void> => {
+        let courseInfo: CourseSummary[] = []
+        for (const ca of courseAddresses) {
+            const info = await getCourseInfo(ca);
+            courseInfo.push(info);
+        }
+        setCourses(courseInfo);
     };
 
     React.useEffect(() => {
@@ -30,7 +56,7 @@ const Courses = () => {
 
     React.useEffect(() => {
         if (courseAddresses.length > 0) {
-
+            getCourseSummaries();
         }
     }, [courseAddresses]);
 
@@ -38,10 +64,12 @@ const Courses = () => {
         <Heading>
             Courses
         </Heading>
-        <Grid templateColumns='repeat(2, 1fr)' gap={1}>
-            {fakeCourses.map((course) => <Course course={course}/>)}
-        </Grid>
-    </Container>
-}
+        {shouldShowCoursesLoading
+            ? <Spinner size='xl'/>
+            : <Grid templateColumns='repeat(2, 1fr)' gap={1}>
+                {courses.map((course) => <Course course={course}/>)}
+            </Grid>}
+    </Container>;
+};
 
 export default Courses;
