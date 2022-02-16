@@ -1,57 +1,34 @@
 import * as React from 'react';
-import { useAddress } from '../../../context/Address';
 import {
     Heading,
     Flex,
-    Text,
     Button,
 } from '@chakra-ui/react';
 import ModuleEditor from './ModuleEditor';
 import { FiPlus } from 'react-icons/fi';
-import { FrontendModule } from '../../../types';
+import { FrontendModule, MarkdownData } from '../../../types';
 
 interface AddModulesProps {
-
+    modules: FrontendModule[];
+    addNewModule: () => void;
+    handleNameChange: (index: number, event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleDescriptionChange: (index: number, event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleMaterialsDataChange: (index: number, data: MarkdownData) => void;
+    handleQuestionsDataChange: (index: number, data: MarkdownData) => void;
+    deleteModuleHandler: (id: string) => void;
 }
 
 const AddModules: React.FC<AddModulesProps> = ({
-
+    modules,
+    addNewModule,
+    handleNameChange,
+    handleDescriptionChange,
+    handleMaterialsDataChange,
+    handleQuestionsDataChange,
+    deleteModuleHandler,
 }: AddModulesProps) => {
-    const address = useAddress();
-    const [modules, setModules] = React.useState<FrontendModule[]>([{
-        name: '',
-        description: '',
-        author: address || '',
-        materials: '',
-        questions: '',
-    },]);
-
-    const addNewModule = (): void => {
-        const newModule: FrontendModule = {
-            name: '',
-            description: '',
-            author: address || '',
-            materials: '',
-            questions: '',
-        };
-        setModules([...modules, newModule]);
-        console.log(modules);
-    };
-
-    const handleMaterialsDataChange = (index: number, data: any) => {
-        const newModules = [...modules];
-        newModules[index].materials = data;
-        setModules(newModules);
-    }
-
-    const handleQuestionsDataChange = (index: number, data: any) => {
-        const newModules = [...modules];
-        newModules[index].questions = data;
-        setModules(newModules);
-    }
 
     return <>
-        {modules.length}
         <Flex justifyContent={'space-between'}>
             <Heading>Add course modules</Heading>
             <hr/>
@@ -64,10 +41,14 @@ const AddModules: React.FC<AddModulesProps> = ({
         {modules.map((module, index) => {
                 const { name, description } = module;
                 return <ModuleEditor
+                    key={module.id}
                     name={name}
                     description={description}
-                    handleMaterialsDataChange={(data: any) => handleMaterialsDataChange(index, data)}
-                    handleQuestionsDataChange={(data: any) => handleQuestionsDataChange(index, data)}/>
+                    handleNameChange={(event: React.ChangeEvent<HTMLInputElement>) => handleNameChange(index, event)}
+                    handleDescriptionChange={(event: React.ChangeEvent<HTMLInputElement>) => handleDescriptionChange(index, event)}
+                    handleMaterialsDataChange={(data: MarkdownData) => handleMaterialsDataChange(index, data)}
+                    handleQuestionsDataChange={(data: MarkdownData) => handleQuestionsDataChange(index, data)}
+                    deleteModuleHandler={() => deleteModuleHandler(module.id)}/>
             })}
     </>
 };

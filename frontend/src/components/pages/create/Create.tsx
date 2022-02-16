@@ -1,13 +1,21 @@
 import * as React from 'react';
+import { v4 as uuid } from 'uuid';
+import { useNavigate } from 'react-router';
 import { useSigner } from '../../../context/Signer';
+import { useAddress } from '../../../context/Address';
 import {
     Container,
     Heading,
     Button,
+    Flex,
 } from '@chakra-ui/react';
 import GeneralInformation from './GeneralInformation';
 import AddModules from './AddModules';
-import { useNavigate } from 'react-router';
+import StorageClient from '../../web3/StorageClient';
+import { FrontendModule, MarkdownData } from '../../../types';
+import 'react-markdown-editor-lite/lib/index.css'
+import _ from 'lodash';
+
 
 const Create: React.FC = () => {
 
@@ -15,9 +23,11 @@ const Create: React.FC = () => {
     const [description, setDescription] = React.useState<string>();
     const [imageURL, setImageURL] = React.useState<string>();
     const [stage, setStage] = React.useState<number>(0);
+    const address = useAddress();
 
-    const shouldAllowNavigationToStage2 = stage === 0 && !!description && !!title // && !!imageURL;
+    const shouldAllowNavigationToStage2 = stage === 0 && ((!!description && !!title && !!imageURL) || true); // TEMP! REMOVE ME!
     const shouldShowBackButton = stage > 0;
+    const shouldShowCreateButton = stage === 1;
 
     const navigate = useNavigate();
     const signer = useSigner();
@@ -30,12 +40,102 @@ const Create: React.FC = () => {
         }
     }, [signer, navigate]);
 
+    const uploadMarkdownData = async (text: string): Promise<string> => {
+        console.log('Uploading')
+        const file = new File([text], 'text.md');
+        console.log(file);
+        const url = await new StorageClient().storeFiles(file);
+        console.log(url);
+        return url;
+    }
+
+    const processModuleData = async () => {
+        let names: string[] = [];
+        let descriptions: string[] = [];
+        let materials: string[] = [];
+        let questions: string[] = [];
+
+        modules.forEach(async (module) => {
+            names.push(module.name);
+            descriptions.push(module.description);
+            const materialsURL = await uploadMarkdownData(module.materials.text);
+            const questionsURL = await uploadMarkdownData(module.questions.text);
+            materials.push(materialsURL);
+            questions.push(questionsURL);
+        });
+        return({names, description, materials, questions});
+    }
+
+    const getModuleIndex = (id: string): number => {
+        let moduleIndex = 0;
+        modules.forEach((module, index) => {
+            if (module.id === id) moduleIndex = index;
+        })
+        return moduleIndex;
+    };
+
     const handleSetTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value);
-    }
+    };
 
     const handleSetDescription = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setDescription(e.target.value);
+    };
+
+    const [modules, setModules] = React.useState<FrontendModule[]>([{
+        id: uuid(),
+        name: '',
+        description: '',
+        author: address || '',
+        materials: '',
+        questions: '',
+    },]);
+
+    const addNewModule = (): void => {
+        const newModule: FrontendModule = {
+            id: uuid(),
+            name: '',
+            description: '',
+            author: address || '',
+            materials: '',
+            questions: '',
+        };
+        setModules([...modules, newModule]);
+    };
+
+    const handleNameChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        const newModules = [...modules];
+        newModules[index].name = event.target.value;
+        setModules(newModules);
+    };
+
+    const handleDescriptionChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        const newModules = [...modules];
+        newModules[index].description = event.target.value;
+        setModules(newModules);
+    };
+
+    const handleMaterialsDataChange = (index: number, data: MarkdownData) => {
+        const newModules = [...modules];
+        newModules[index].materials = data;
+        setModules(newModules);
+    };
+
+    const handleQuestionsDataChange = (index: number, data: MarkdownData) => {
+        const newModules = [...modules];
+        newModules[index].questions = data;
+        setModules(newModules);
+    };
+
+    const deleteModuleHandler = (id: string): void => {
+        // This is broken af if done with index so we use a uuid instead
+        const moduleIndexToDelete = getModuleIndex(id);
+        setModules((modules) => ([...modules].splice(moduleIndexToDelete, 1)));
+    };
+
+    const createCourse = async () => {
+        const data = await processModuleData();
+        console.log(data);
     }
 
     let subpage;
@@ -51,7 +151,14 @@ const Create: React.FC = () => {
                 handleSetImageURL={setImageURL}/>;
             break;
         case 1:
-            subpage = <AddModules/>
+            subpage = <AddModules
+                modules={modules}
+                addNewModule={addNewModule}
+                handleNameChange={handleNameChange}
+                handleDescriptionChange={handleDescriptionChange}
+                handleMaterialsDataChange={handleMaterialsDataChange}
+                handleQuestionsDataChange={handleQuestionsDataChange}
+                deleteModuleHandler={deleteModuleHandler}/>
             break;
     }
 
@@ -60,16 +167,22 @@ const Create: React.FC = () => {
             <br/>
             {subpage}
             <br/>
-            {shouldAllowNavigationToStage2 && <Button
-                colorScheme={'purple'}
-                onClick={() => setStage(1)}>
-                Next</Button>}
-            {shouldShowBackButton && <Button
-                colorScheme={'red'}
-                onClick={() => setStage((stage) => stage - 1)}>
-                Back</Button>}
-    </Container>
-
+            <Flex justifyContent='space-between'>
+                {shouldAllowNavigationToStage2 && <Button
+                    alignSelf={'flex-end'}
+                    colorScheme={'purple'}
+                    onClick={() => setStage(1)}>
+                    Next</Button>}
+                {shouldShowBackButton && <Button
+                    colorScheme={'red'}
+                    onClick={() => setStage((stage) => stage - 1)}>
+                    Back</Button>}
+                {shouldShowCreateButton && <Button
+                    onClick={createCourse}
+                    colorScheme={'green'}
+                    >Create</Button>}
+            </Flex>
+    </Container>;
 }
 
 export default Create;

@@ -17,6 +17,10 @@ export interface CourseSummary {
     address: string;
 }
 
+export interface MarkdownData {
+    text: string;
+    html: string;
+}
 export interface Module {
     name: string;
     description: string;
@@ -26,6 +30,7 @@ export interface Module {
 }
 
 export interface FrontendModule {
+    id: string;
     name: string;
     description: string;
     author: string;

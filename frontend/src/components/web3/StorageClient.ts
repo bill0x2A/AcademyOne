@@ -15,8 +15,8 @@ class StorageClient {
         const cid = await this.client.put([newFile], {
             name: fileName,
         });
-        const imageURI = `https://${cid}.ipfs.dweb.link/${fileName}`;
-        return imageURI;
+        const url = `https://${cid}.ipfs.dweb.link/${fileName}`;
+        return url;
     }
 }
 
