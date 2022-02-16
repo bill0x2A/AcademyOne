@@ -206,9 +206,41 @@ contract CourseContract {
         pushModules(names, descriptions, materialHashes, questionHashes);
     }
 
-    function returnRequests(uint ID) public view returns(string memory name){
+    function returnRequest(uint ID) public view returns(
+        string memory _name,
+        string memory _description,
+        address _author,
+        bool _confirmed,
+        address _approver,
+        string[] memory _moduleNames,
+        string[] memory _moduleDescs,
+        string[] memory _moduleMaterials,
+        string[] memory _modulesQuestions
 
-    // To write
+    ){
+
+        Request memory request = listOfRequests[ID];
+
+        Module[] memory modulesToReturn = requestModules[ID];
+
+        uint length = modulesToReturn.length;
+
+        string[] memory names = new string[](length);
+        string[] memory descriptions = new string[](length);
+        string[] memory materials = new string[](length);
+        string[] memory questions = new string[](length);
+
+        for (uint i = 0; i < length; i++) {
+            Module memory module = modulesToReturn[i];
+            names[i] = module.name;
+            descriptions[i] = module.description;
+            materials[i] = module.materialsHash;
+            questions[i] = module.questionsHash;
+        }
+
+        return(request.name, request.description, request.author, request.confirmed, request.approver, names, descriptions, materials, questions);
+
+
 
     }
 }
