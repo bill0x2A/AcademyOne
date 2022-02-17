@@ -5,7 +5,7 @@ import { Routes, Route } from 'react-router';
 import TokenArtifact from '../contracts/Token.json';
 import contractAddress from '../contracts/contract-address.json';
 import NoWalletDetected from './NoWalletDetected';
-import { HARDHAT_NETWORK_ID } from '../constants/chain';
+import { RINKEBY_NETWORK_ID } from '../constants/chain';
 import { AddressProvider } from '../context/Address';
 import { SignerProvider } from '../context/Signer';
 import { ProviderProvider } from '../context/Provider';
@@ -46,11 +46,11 @@ const Dapp: React.FC = () => {
   }
 
   const checkNetwork = () => {
-    if (window.ethereum.networkVersion === HARDHAT_NETWORK_ID) {
+    if (window.ethereum.networkVersion === RINKEBY_NETWORK_ID) {
       return true;
     }
 
-    setNetworkError('Please connect Metamask to localhost:8545');
+    setNetworkError('Please connect Metamask to Rinkeby bossman');
     return false;
   }
 
