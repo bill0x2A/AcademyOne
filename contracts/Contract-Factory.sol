@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: GPL-3.0
 
 import "./Course-Contract.sol"; 
-
 pragma solidity >=0.7.0 <0.9.0;
 
 contract CourseFactory{
 
     //Init the array of deployed contract addresses
     address[] public deployedCourses;
+
     function createCourse (string memory name, string memory description, string memory imageHash,
     string[] memory moduleNames, string[] memory moduleDescriptions,
     string[] memory materialHashes, string[] memory questionHashes) 

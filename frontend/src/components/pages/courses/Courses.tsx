@@ -30,7 +30,7 @@ const Courses: React.FC = () => {
 
     const getCourseInfo = async (address: string): Promise<CourseSummary> => {
             const course = getCourse(address, signer || provider);
-            const courseInformation  = await course.getSummaryInfomation();
+            const courseInformation  = await course.getSummaryInformation();
             const [name, description, imageURL, author] = courseInformation;
             return {
                 name,
