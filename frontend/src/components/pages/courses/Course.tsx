@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { CourseSummary } from '../../../types';
 import { useNavigate } from 'react-router';
+import Indenticon from '../../ui/Identicon';
 import {
     Box,
     Center,
@@ -12,6 +13,7 @@ import {
     useColorModeValue,
 } from '@chakra-ui/react';
 import styles from './Course.module.sass';
+import Identicon from '../../ui/Identicon';
 
 interface CourseProps {
     course: CourseSummary;
@@ -77,9 +79,7 @@ const Course: React.FC<CourseProps> = ({
             </Text>
         </Stack>
         <Stack mt={6} direction={'row'} spacing={4} align={'center'}>
-            <Avatar
-                src={'https://avatars0.githubusercontent.com/u/1164541?v=4'}
-            />
+                <Identicon address={address} size={40}/>
             <Stack direction={'column'} spacing={0} fontSize={'sm'}>
                 <Text fontWeight={600}>{author}</Text>
             </Stack>

@@ -7,7 +7,7 @@ import IdenticonImage from 'react-identicons';
 interface IdenticonProps {
     address: string;
     size: number;
-    className: string;
+    className?: string;
 }
 
 const Identicon: React.FC<IdenticonProps> = ({
