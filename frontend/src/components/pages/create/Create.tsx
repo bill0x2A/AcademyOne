@@ -16,8 +16,11 @@ import GeneralInformation from './GeneralInformation';
 import AddModules from './AddModules';
 import StorageClient from '../../web3/StorageClient';
 import { FrontendModule, MarkdownData } from '../../../types';
+import { create } from 'ipfs-http-client'
 import 'react-markdown-editor-lite/lib/index.css';
+import { FACTORY_ADDRESS } from '../../../constants/chain';
 
+const client = create({url: 'https://ipfs.infura.io:5001/api/v0'});
 
 const Create: React.FC = () => {
 
@@ -28,7 +31,7 @@ const Create: React.FC = () => {
     const [isCreating, setIsCreating] = React.useState<boolean>(false);
     const wasCreating = usePrevious(isCreating);
     const address = useAddress();
-    const contract = useCourseFactory('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512');
+    const contract = useCourseFactory(FACTORY_ADDRESS);
 
     const shouldAllowNavigationToStage2 = stage === 0 && ((!!description && !!title && !!imageURL) || true); // TEMP! REMOVE ME!
     const shouldShowBackButton = stage > 0;
@@ -55,6 +58,19 @@ const Create: React.FC = () => {
         return url;
     }
 
+    const newUploadMarkdownData = async (text: string): Promise<string> => {
+        const file = new File([text], 'text.md');
+        try {
+            const added = await client.add(file)
+            const url = `https://ipfs.infura.io/ipfs/${added.path}`
+            console.log(url);
+            return url;
+          } catch (error) {
+            console.log('Error uploading file: ', error)
+          } 
+        return '';
+    }
+
     const processModuleData = async () => {
         let names: string[] = [];
         let descriptions: string[] = [];
@@ -63,8 +79,8 @@ const Create: React.FC = () => {
         for(const module of modules) {
             names.push(module.name);
             descriptions.push(module.description);
-            const materialsURL = await uploadMarkdownData(module.materials.text);
-            const questionsURL = await uploadMarkdownData(module.questions.text);
+            const materialsURL = await newUploadMarkdownData(module.materials.text);
+            const questionsURL = await newUploadMarkdownData(module.questions.text);
             materials.push(materialsURL);
             questions.push(questionsURL);
         }
@@ -146,6 +162,15 @@ const Create: React.FC = () => {
             materials,
             questions,
         } = await processModuleData();
+        console.dir({
+            title,
+            description,
+            imageURL,
+            names,
+            descriptions,
+            materials,
+            questions,
+        })
         const tx = await contract.createCourse(
             title,
             description,

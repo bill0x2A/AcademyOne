@@ -8,6 +8,9 @@ import {
 } from '@chakra-ui/react';
 import { usePrevious } from '../../../hooks';
 import StorageClient from '../../web3/StorageClient';
+import { create } from 'ipfs-http-client'
+
+const client = create({url: 'https://ipfs.infura.io:5001/api/v0'});
 
 interface ImageUploaderProps {
     setImageURL: (imageURL: string) => void;
@@ -59,8 +62,17 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     const uploadImage = async () => {
         setIsUploadingToIPFS(true);
-        const newImageURI = await new StorageClient().storeFiles(file);
-        setImageURL(newImageURI);
+        try {
+            if(!file) return;
+            const added = await client.add(file)
+            const url = `https://ipfs.infura.io/ipfs/${added.path}`
+            console.log(url);
+            setImageURL(url)
+          } catch (error) {
+            console.log('Error uploading file: ', error)
+          } 
+        // const newImageURI = await new StorageClient().storeFiles(file);
+        // setImageURL(newImageURI);
         setIsUploadingToIPFS(false);
     }
 

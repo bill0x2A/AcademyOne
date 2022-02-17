@@ -5,7 +5,7 @@ import { Routes, Route } from 'react-router';
 import TokenArtifact from '../contracts/Token.json';
 import contractAddress from '../contracts/contract-address.json';
 import NoWalletDetected from './NoWalletDetected';
-import { RINKEBY_NETWORK_ID } from '../constants/chain';
+import { RINKEBY_NETWORK_ID, HARDHAT_NETWORK_ID } from '../constants/chain';
 import { AddressProvider } from '../context/Address';
 import { SignerProvider } from '../context/Signer';
 import { ProviderProvider } from '../context/Provider';
@@ -21,8 +21,6 @@ import { CustomWindow } from '../types';
 declare let window: CustomWindow;
 
 const Dapp: React.FC = () => {
-  const [tokenData, setTokenData] = React.useState<{name: string; symbol: string}>();
-  const [pollDataInterval, setPollDataInterval] = React.useState<any>();
   const [selectedAddress, setSelectedAddress] = React.useState<string>();
   const [balance, setBalance] = React.useState<number>();
   const [txBeingSent, setTxBeingSent] = React.useState();
@@ -36,7 +34,6 @@ const Dapp: React.FC = () => {
 
   const resetState = () => {
     console.log('resetting state');
-    setTokenData(undefined);
     setSelectedAddress(undefined);
     setBalance(undefined);
     setTxBeingSent(undefined);
@@ -46,7 +43,9 @@ const Dapp: React.FC = () => {
   }
 
   const checkNetwork = () => {
-    if (window.ethereum.networkVersion === RINKEBY_NETWORK_ID) {
+    if (
+        window.ethereum.networkVersion === RINKEBY_NETWORK_ID
+        || window.ethereum.networkVersion === HARDHAT_NETWORK_ID) {
       return true;
     }
 
