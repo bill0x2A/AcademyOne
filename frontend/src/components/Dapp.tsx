@@ -16,6 +16,7 @@ import Home from './pages/home/Home';
 import Courses from './pages/courses/Courses';
 import Course from './pages/course/CourseHomepage';
 import Create from './pages/create/Create';
+import Request from './pages/request/Request';
 import { CustomWindow } from '../types';
 import CreateRequest from './pages/createRequest/CreateRequest';
 
@@ -125,6 +126,7 @@ const Dapp: React.FC = () => {
                   <Route path='/' element={<Home/>}/>
                   <Route path='/courses/:courseAddress' element={<Course/>}/>
                   <Route path='/courses/:courseAddress/newrequest' element={<CreateRequest/>}/>
+                  <Route path='/courses/:courseAddress/requests/:requestIndex' element={<Request/>}/>
                   <Route path='/courses' element={<Courses/>}/>
                   <Route path='/create' element={<Create/>}/>
                 </Routes>

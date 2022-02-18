@@ -17,6 +17,7 @@ import {
     Stack,
     FormLabel,
 } from '@chakra-ui/react';
+import { getTextFromIPFS } from '../../../helpers';
 import AddModules from '../create/AddModules';
 import { FrontendModule, MarkdownData } from '../../../types';
 import { create } from 'ipfs-http-client'
@@ -139,12 +140,14 @@ const CreateRequest: React.FC = () => {
         const returnedModules = await contract.returnModules(version - 1);
         const [names, descriptions, materials, questions] = returnedModules;
         for(let i=0; i < names.length; i++) {
+            const materialsText: string = await getTextFromIPFS(materials[i]);
+            const questionsText: string = await getTextFromIPFS(questions[i])
             const module = {
                 id: uuid(),
                 name: names[i],
                 description: descriptions[i],
-                materials: materials[i],
-                questions: questions[i],
+                materials: materialsText,
+                questions: questionsText,
             }
             modulesToReturn.push(module);
         }

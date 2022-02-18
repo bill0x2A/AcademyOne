@@ -71,8 +71,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           } catch (error) {
             console.log('Error uploading file: ', error)
           } 
-        // const newImageURI = await new StorageClient().storeFiles(file);
-        // setImageURL(newImageURI);
         setIsUploadingToIPFS(false);
     }
 

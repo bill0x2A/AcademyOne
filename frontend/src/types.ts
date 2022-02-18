@@ -36,6 +36,16 @@ export interface FrontendModule {
     questions: any;
 }
 
+export interface PullRequest {
+    index: number;
+    name: string;
+    description: string;
+    author: string;
+    approved: boolean;
+    tokens: number;
+    approvers: number;
+}
+
 export interface CustomWindow extends Window {
     ethereum: MetaMaskInpageProvider;
 }
