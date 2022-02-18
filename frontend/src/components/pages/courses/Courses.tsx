@@ -4,6 +4,7 @@ import {
     Heading,
     Grid,
     Spinner,
+    Center,
 } from "@chakra-ui/react";
 import Course from './Course';
 import { useSigner } from '../../../context/Signer';
@@ -65,7 +66,7 @@ const Courses: React.FC = () => {
             Courses
         </Heading>
         {shouldShowCoursesLoading
-            ? <Spinner size='xl'/>
+            ? <Center minH={'calc(100vh - 200px)'}><Spinner size='xl'/></Center>
             : <Grid templateColumns='repeat(2, 1fr)' gap={1}>
                 {courses.map((course) => <Course course={course}/>)}
             </Grid>}

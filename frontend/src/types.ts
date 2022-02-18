@@ -32,7 +32,6 @@ export interface FrontendModule {
     id: string;
     name: string;
     description: string;
-    author: string;
     materials: any;
     questions: any;
 }

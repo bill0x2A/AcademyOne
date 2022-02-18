@@ -17,6 +17,7 @@ import Courses from './pages/courses/Courses';
 import Course from './pages/course/CourseHomepage';
 import Create from './pages/create/Create';
 import { CustomWindow } from '../types';
+import CreateRequest from './pages/createRequest/CreateRequest';
 
 declare let window: CustomWindow;
 
@@ -26,7 +27,7 @@ const Dapp: React.FC = () => {
   const [txBeingSent, setTxBeingSent] = React.useState();
   const [txError, setTxError] = React.useState();
   const [networkError, setNetworkError] = React.useState<string>();
-  const [provider, setProvider] = React.useState<ethers.providers.Web3Provider>();
+  const [provider, setProvider] = React.useState<ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider>();
   const [signer, setSigner] = React.useState<ethers.Signer>();
 
   const web3StorageAPIKey = process.env.SNOWPACK_PUBLIC_STORAGE_API_KEY || '';
@@ -55,7 +56,8 @@ const Dapp: React.FC = () => {
 
   const initializeEthers = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-    setProvider(provider);
+    const infuraProvider = new ethers.providers.JsonRpcProvider('wss://rinkeby.infura.io/ws/v3/35024bbe8b9b4511bb92a9ea08119f69');
+    setProvider(infuraProvider);
     setSigner(provider.getSigner(0));
   }
 
@@ -122,6 +124,7 @@ const Dapp: React.FC = () => {
                 <Routes>
                   <Route path='/' element={<Home/>}/>
                   <Route path='/courses/:courseAddress' element={<Course/>}/>
+                  <Route path='/courses/:courseAddress/newrequest' element={<CreateRequest/>}/>
                   <Route path='/courses' element={<Courses/>}/>
                   <Route path='/create' element={<Create/>}/>
                 </Routes>

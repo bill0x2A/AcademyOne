@@ -15,6 +15,8 @@ const mdParser = new MarkdownIt();
 interface ModuleEditorProps {
     name: string;
     description: string;
+    materials: string;
+    questions: string;
     handleNameChange: React.ChangeEventHandler<HTMLInputElement>;
     handleDescriptionChange: React.ChangeEventHandler<HTMLInputElement>;
     handleMaterialsDataChange: (data: MarkdownData) => void;
@@ -25,13 +27,15 @@ interface ModuleEditorProps {
 const ModuleEditor: React.FC<ModuleEditorProps> = ({
     name,
     description,
+    materials,
+    questions,
     handleNameChange,
     handleDescriptionChange,
     handleMaterialsDataChange,
     handleQuestionsDataChange,
     deleteModuleHandler,
 }) => {
-    return <Box background={'purple.300'} position='relative' border={'3px solid white'} py={8} px={5} my={5}>
+    return <Box background={'blue.700'} position='relative' border={'3px solid white'} py={8} px={5} my={5}>
             <Button
             onClick={deleteModuleHandler}
             colorScheme='red'
@@ -61,12 +65,14 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({
         <MdEditor
             style={{ height: '500px' }}
             renderHTML={text => mdParser.render(text)}
-            onChange={handleMaterialsDataChange}/>
+            onChange={handleMaterialsDataChange}
+            value={materials}/>
         <Text mt={5}>Questions</Text>
         <MdEditor
             style={{ height: '200px' }}
             renderHTML={text => mdParser.render(text)}
-            onChange={handleQuestionsDataChange}/>
+            onChange={handleQuestionsDataChange}
+            value={questions}/>
     </Box>
 }
 

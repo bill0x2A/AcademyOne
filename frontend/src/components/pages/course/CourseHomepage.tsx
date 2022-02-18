@@ -3,15 +3,17 @@ import {
     Container,
     Heading,
     Text,
-    Image,
+    Button,
     Stack,
     Flex,
     Box,
+    Select,
 } from '@chakra-ui/react';
+import { v4 as uuid } from 'uuid';
 import UserDisplay from '../../ui/UserDisplay';
 import { useCourseContract } from '../../web3/useCourse'
-import { useParams } from 'react-router';
-import { CourseSummary, Module } from '../../../types';
+import { useNavigate, useParams } from 'react-router';
+import { CourseSummary, FrontendModule } from '../../../types';
 import Enroll from '../../web3/Enroll';
 import ModulePreview from './ModulePreview';
 
@@ -24,7 +26,10 @@ const CourseHomepage: React.FC = () => {
         author: '',
         address: '',
     });
-    const [modules, setModules] = React.useState<Module[]>([]);
+    const [modules, setModules] = React.useState<FrontendModule[]>([]);
+    const[versions, setVersions] = React.useState<number[]>([]);
+    const [selectedVersion, setSelectedVersion] = React.useState<number>();
+    const navigate = useNavigate();
 
     const { courseAddress } = useParams();
     const contract = useCourseContract(courseAddress || '0x0');
@@ -45,25 +50,45 @@ const CourseHomepage: React.FC = () => {
         });
     };
 
-    const getModules = async (): Promise<void> => {
-        const modulesToReturn: Module[] = []
-        const [names, descriptions, materials, questions] = await contract.returnModules();
+    const getModules = async (version: number): Promise<void> => {
+        const modulesToReturn: FrontendModule[] = []
+        const [names, descriptions, materials, questions] = await contract.returnModules(0);
         for(let i=0; i < names.length; i++) {
             const module = {
-                name: names[i],
-                description: descriptions[i],
-                materialsHash: materials[i],
-                questionsHash: questions[i],
+                id: uuid(),
+                name: names[i] as string,
+                description: descriptions[i] as string,
+                materials: materials[i] as string,
+                questions: questions[i] as string,
             }
             modulesToReturn.push(module);
         }
         setModules(modulesToReturn);
     };
 
+    const getLatestVersion = async (): Promise<void> => {
+        const version: number = await contract.index();
+        const possibleVersions = Array.from(Array(version + 1).keys())
+        setVersions(possibleVersions);
+        setSelectedVersion(version);
+    };
+
+    const selectVersionHandler = (e: any): void => {
+        setSelectedVersion(e.target.value);
+    }
+
+    const submitPullRequestHandler = (): void => {
+        navigate(`/courses/${courseAddress}/newrequest`);
+    };
+
     React.useEffect(() => {
         getCourseSummary();
-        getModules();
+        getLatestVersion();
     }, []);
+
+    React.useEffect(() => {
+        if (!!selectedVersion) getModules(selectedVersion);
+    }, [selectedVersion])
 
     const {
         name,
@@ -79,15 +104,30 @@ const CourseHomepage: React.FC = () => {
                 <Text my={0}>Creator</Text>
                 <UserDisplay address={author}/>
             </Stack>
+            <Stack>
+                    <Text my={0}>Version</Text>
+                <Select onChange={selectVersionHandler}>
+                    {versions.map((version) => <option value={version}>{version}</option>)}
+                </Select>
+            </Stack>
         </Flex>
-        <Box boxSize={'xl'} background={'azure'} width={'100%'} overflow={'hidden'} mb={6}>
-            <Image src={imageURL} objectFit={'fill'}/>
+        <Box
+            backgroundImage={imageURL}
+            borderRadius={'5px'}
+            backgroundSize='cover'
+            boxSize={'xl'}
+            width={'100%'}
+            overflow={'hidden'}
+            mb={6}>
         </Box>
         <Text mb={10}>{description}</Text>
         <Heading>Modules</Heading>
         <hr/>
-        {modules.map((module) => <ModulePreview module={module}/>)}
-        <Enroll courseAddress={courseAddress || '0x0'}/>
+        {modules.map((module) => <ModulePreview key={module.id} module={module}/>)}
+        <Flex justifyContent='flex-end'>
+            <Enroll courseAddress={courseAddress || '0x0'}/>
+            <Button ml={5} onClick={submitPullRequestHandler}>Submit Pull Request</Button>
+        </Flex>
     </Container>
 }
 

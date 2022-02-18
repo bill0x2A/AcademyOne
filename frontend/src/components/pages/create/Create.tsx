@@ -2,7 +2,6 @@ import * as React from 'react';
 import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router';
 import { useSigner } from '../../../context/Signer';
-import { useAddress } from '../../../context/Address';
 import { useCourseFactory } from '../../web3/useCourseFactoryContract';
 import { usePrevious } from '../../../hooks';
 import {
@@ -14,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 import GeneralInformation from './GeneralInformation';
 import AddModules from './AddModules';
-import StorageClient from '../../web3/StorageClient';
 import { FrontendModule, MarkdownData } from '../../../types';
 import { create } from 'ipfs-http-client'
 import 'react-markdown-editor-lite/lib/index.css';
@@ -30,7 +28,6 @@ const Create: React.FC = () => {
     const [stage, setStage] = React.useState<number>(0);
     const [isCreating, setIsCreating] = React.useState<boolean>(false);
     const wasCreating = usePrevious(isCreating);
-    const address = useAddress();
     const contract = useCourseFactory(FACTORY_ADDRESS);
 
     const shouldAllowNavigationToStage2 = stage === 0 && ((!!description && !!title && !!imageURL) || true); // TEMP! REMOVE ME!
@@ -48,15 +45,6 @@ const Create: React.FC = () => {
             navigate('/');
         }
     }, [signer, navigate]);
-
-    const uploadMarkdownData = async (text: string): Promise<string> => {
-        console.log('Uploading')
-        const file = new File([text], 'text.md');
-        console.log(file);
-        const url = await new StorageClient().storeFiles(file);
-        console.log(url);
-        return url;
-    }
 
     const newUploadMarkdownData = async (text: string): Promise<string> => {
         const file = new File([text], 'text.md');
@@ -107,7 +95,6 @@ const Create: React.FC = () => {
         id: uuid(),
         name: '',
         description: '',
-        author: address || '',
         materials: '',
         questions: '',
     },]);
@@ -117,7 +104,6 @@ const Create: React.FC = () => {
             id: uuid(),
             name: '',
             description: '',
-            author: address || '',
             materials: '',
             questions: '',
         };

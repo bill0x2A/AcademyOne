@@ -4,10 +4,10 @@ import {
     Heading,
     Text,
 } from '@chakra-ui/react';
-import { Module } from '../../../types';
+import { FrontendModule } from '../../../types';
 
 interface ModulePreviewProps {
-    module: Module;
+    module: FrontendModule;
 }
 
 const ModulePreview: React.FC<ModulePreviewProps> = ({
@@ -17,9 +17,16 @@ const ModulePreview: React.FC<ModulePreviewProps> = ({
         name,
         description,
     } = module;
-    return <Flex background={'white'} color={'black'} px={5} py={15}>
-        <Heading>{name}</Heading>
-        <Text>{description}</Text>
+    return <Flex
+        borderRadius={'5px'}
+        my={5}
+        flexDirection={'column'}
+        border='3px solid white'
+        color={'white'}
+        px={5}
+        py={15}>
+        <Heading fontSize={22}>{name}</Heading>
+        <Text fontSize={18}>{description}</Text>
     </Flex>
 };
 

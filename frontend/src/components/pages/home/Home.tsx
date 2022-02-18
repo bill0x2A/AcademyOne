@@ -4,12 +4,10 @@ import {
 } from '@chakra-ui/react';
 import { useCourseFactory } from '../../web3/useCourseFactoryContract';
 import { Container } from '@chakra-ui/react';
-import { useAddress } from '../../../context/Address';
 import { FACTORY_ADDRESS } from '../../../constants/chain';
 import Hero from './Hero';
 
 const Home: React.FC = () => {
-    const address = useAddress();
     const contract = useCourseFactory(FACTORY_ADDRESS);
 
     const testContract = async () => {

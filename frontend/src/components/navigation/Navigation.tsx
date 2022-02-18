@@ -69,7 +69,7 @@ const Nav: React.FC<NavProps> = ({
             py={2}
             cursor={'pointer'}>
             <GiSpellBook size={20}/>
-            <Box>EduDAO</Box>
+            <Box>AcademyONE</Box>
           </Stack>
           <Flex alignItems={'center'}>
             <NavLink path={'/courses'}>Courses</NavLink>

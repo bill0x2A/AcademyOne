@@ -29,9 +29,7 @@ const AddModules: React.FC<AddModulesProps> = ({
 }: AddModulesProps) => {
 
     return <>
-        <Flex justifyContent={'space-between'}>
-            <Heading>Add course modules</Heading>
-            <hr/>
+        <Flex mt={20} justifyContent={'flex-end'}>
             <Button
                 colorScheme={'purple'}
                 rightIcon={<FiPlus/>}
@@ -39,11 +37,13 @@ const AddModules: React.FC<AddModulesProps> = ({
                 >Add Module</Button>
         </Flex>
         {modules.map((module, index) => {
-                const { name, description } = module;
+                const { name, description, materials, questions } = module;
                 return <ModuleEditor
                     key={module.id}
                     name={name}
                     description={description}
+                    materials={materials}
+                    questions={questions}
                     handleNameChange={(event: React.ChangeEvent<HTMLInputElement>) => handleNameChange(index, event)}
                     handleDescriptionChange={(event: React.ChangeEvent<HTMLInputElement>) => handleDescriptionChange(index, event)}
                     handleMaterialsDataChange={(data: MarkdownData) => handleMaterialsDataChange(index, data)}

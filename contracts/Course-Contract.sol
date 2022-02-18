@@ -170,12 +170,11 @@ contract CourseContract {
         string[] memory _materialsHash,
         string[] memory _questionsHash
     ) public {
-        author = msg.sender;
 
         Request memory newRequest = Request({
             name: _nameReq,
             description: _descriptionReq,
-            author: author,
+            author: msg.sender,
             confirmed: false,
             tokens: _tokens,
             approvers: 0
