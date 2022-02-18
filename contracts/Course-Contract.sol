@@ -1,6 +1,8 @@
 // contract testing
 
 // SPDX-License-Identifier: GPL-3.0
+
+
 pragma solidity >=0.7.0 <0.9.0;
 
 contract CourseContract {
@@ -23,7 +25,8 @@ contract CourseContract {
         string description;
         address author;
         bool confirmed;
-        address approver;
+        uint tokens;
+        uint approvers;
     }
 
     string public courseName;
@@ -31,20 +34,18 @@ contract CourseContract {
     string public courseImageHash;
     uint public index;
     uint public requestIndex;
+    uint public coursePrice;
+    uint public numOfMaintainers;
     address public author;
     address public manager;
     Request[] public listOfRequests;
     Module[] public modulesToPush;
     Module[] public currentModules;
+    mapping(address=>uint) public balance;
     mapping(address=>bool) public maintainers;
     mapping(uint=>Module[]) public requestModules;
     mapping(uint=>Module[]) public moduleVersions;
-
-    modifier onlyOwner() {
-        //restricted requires either a manager or maintainer to operate the function
-        require(msg.sender == manager);
-        _;
-    }
+    mapping(uint => mapping(address=>bool)) public maintainerVotes;
     
     modifier restricted() {
         //restricted requires either a manager or maintainer to operate the function
@@ -53,6 +54,7 @@ contract CourseContract {
     }
 
     constructor(
+        address _manager,
         string memory name,
         string memory description,
         string memory imageHash,
@@ -62,13 +64,14 @@ contract CourseContract {
         string[] memory questionHashes)
     {
         //contructor sets manager as contract creator
-        manager = msg.sender;
+        manager = _manager;
         index = 0;
         requestIndex = 0;
+        numOfMaintainers = 1;
+        balance[manager] = 1000;
         courseName = name;
         courseDescription = description;
         courseImageHash = imageHash;
-        addMaintainer(manager);
         addInitialModules(moduleNames, moduleDescriptions, materialHashes, questionHashes);
     }
 
@@ -92,6 +95,7 @@ contract CourseContract {
 
         //adds new maintainer to the mapping with positive boolean value pair
         maintainers[newMaintainer] = true;
+        numOfMaintainers++;
     }
 
     function addInitialModules(
@@ -160,6 +164,7 @@ contract CourseContract {
         //array of modules are stored at request index in request modules mappings.
         string memory _nameReq,
         string memory _descriptionReq,
+        uint _tokens,
         string[] memory _moduleNames,
         string[] memory _moduleDescriptions,
         string[] memory _materialsHash,
@@ -172,7 +177,8 @@ contract CourseContract {
             description: _descriptionReq,
             author: author,
             confirmed: false,
-            approver: address(0)
+            tokens: _tokens,
+            approvers: 0
         });
 
         listOfRequests.push(newRequest);
@@ -192,13 +198,22 @@ contract CourseContract {
         requestIndex++;
     }
 
+    function voteRequest(uint ID) public restricted{
+        require(maintainerVotes[ID][msg.sender]!= true);
+        maintainerVotes[ID][msg.sender] = true;
+        Request storage request = listOfRequests[ID];
+        request.approvers++;
+        if (request.approvers > numOfMaintainers) {
+            approveRequest(ID);
+        }
+    }
+
     function approveRequest(uint ID) public restricted{
         //Approves a request at index ID in list of requests array,
         //changes the approver address and confirmed boolean,
         //pushes all the new modules stored in request module mapping, into current modules array mapping.
         Request storage request = listOfRequests[ID];
         request.confirmed = true;
-        request.approver = msg.sender;
 
         Module[] memory modules = requestModules[ID];
 
@@ -221,19 +236,11 @@ contract CourseContract {
     }
 
     function returnRequest(uint ID) public view returns(
-        string memory _name,
-        string memory _description,
-        address _author,
-        bool _confirmed,
-        address _approver,
         string[] memory _moduleNames,
         string[] memory _moduleDescs,
         string[] memory _moduleMaterials,
         string[] memory _modulesQuestions
-
     ){
-
-        Request memory request = listOfRequests[ID];
 
         Module[] memory modulesToReturn = requestModules[ID];
 
@@ -251,10 +258,21 @@ contract CourseContract {
             materials[i] = module.materialsHash;
             questions[i] = module.questionsHash;
         }
-
-        return(request.name, request.description, request.author, request.confirmed, request.approver, names, descriptions, materials, questions);
-
-
-
+        returnRequestTokens(ID);
+        return(names, descriptions, materials, questions);
     }
+    function returnRequestTokens(uint ID) public view returns(
+        string[2] memory,
+        address,
+        bool,
+        uint[2] memory
+        ){
+            Request memory request = listOfRequests[ID];
+            string[2] memory nameDesc = [request.name,request.description];
+            uint[2] memory tokensApprovers = [request.tokens, request.approvers];
+
+            return(nameDesc, request.author, request.confirmed, tokensApprovers);
+        }
+    
+    
 }
