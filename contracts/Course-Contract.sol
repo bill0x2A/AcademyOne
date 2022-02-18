@@ -274,5 +274,16 @@ contract CourseContract {
             return(nameDesc, request.author, request.confirmed, tokensApprovers);
         }
     
-    
+    function setAllowance() public {
+        //Should change someone's allowance based on their token changing, or the current pot changing, or the tokens available changing
+
+    }
+
+    function setCoursePrice() public restricted{
+        //maintainers can change the price of the course at any time
+    }
+
+    function tokenTransfer() public {
+        //anyone can transfer their tokens(stake) of the course to anyone else.
+    }
 }
