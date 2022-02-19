@@ -68,7 +68,7 @@ const Courses: React.FC = () => {
         {shouldShowCoursesLoading
             ? <Center minH={'calc(100vh - 200px)'}><Spinner size='xl'/></Center>
             : <Grid templateColumns='repeat(2, 1fr)' gap={1}>
-                {courses.map((course) => <Course course={course}/>)}
+                {courses.map((course) => <Course key={course.address} course={course}/>)}
             </Grid>}
     </Container>;
 };

@@ -67,8 +67,8 @@ const Create: React.FC = () => {
         for(const module of modules) {
             names.push(module.name);
             descriptions.push(module.description);
-            const materialsURL = await newUploadMarkdownData(module.materials.text);
-            const questionsURL = await newUploadMarkdownData(module.questions.text);
+            const materialsURL = await newUploadMarkdownData(module.materials);
+            const questionsURL = await newUploadMarkdownData(module.questions);
             materials.push(materialsURL);
             questions.push(questionsURL);
         }
@@ -124,13 +124,13 @@ const Create: React.FC = () => {
 
     const handleMaterialsDataChange = (index: number, data: MarkdownData) => {
         const newModules = [...modules];
-        newModules[index].materials = data;
+        newModules[index].materials = data.text;
         setModules(newModules);
     };
 
     const handleQuestionsDataChange = (index: number, data: MarkdownData) => {
         const newModules = [...modules];
-        newModules[index].questions = data;
+        newModules[index].questions = data.text;
         setModules(newModules);
     };
 
@@ -148,15 +148,6 @@ const Create: React.FC = () => {
             materials,
             questions,
         } = await processModuleData();
-        console.dir({
-            title,
-            description,
-            imageURL,
-            names,
-            descriptions,
-            materials,
-            questions,
-        })
         const tx = await contract.createCourse(
             title,
             description,

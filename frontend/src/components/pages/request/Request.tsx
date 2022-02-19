@@ -9,6 +9,7 @@ import {
     Flex,
     Text,
 } from '@chakra-ui/react';
+import ModuleView from '../../ui/ModuleView';
 import { v4 as uuid } from 'uuid';
 import { useCourseContract } from '../../web3/useCourse';
 import { useParams } from 'react-router';
@@ -28,7 +29,7 @@ const Request: React.FC = () => {
 
     //State
     const [requestSummary, setRequestSummary] = React.useState<PullRequest>();
-    const [request, setRequest] = React.useState<any>();
+    const [request, setRequest] = React.useState<FrontendModule[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
     const [isApproving, setIsApproving] = React.useState<boolean>(false);
     const [isMaintainer, setIsMainatiner] = React.useState<boolean>(false);
@@ -56,7 +57,7 @@ const Request: React.FC = () => {
     const getRequest = async() => { 
         const modulesToReturn: FrontendModule[] = [];
         const [moduleNames, moduleDescs, moduleMaterials, moduleQuestions] = await contract.returnRequest(requestIndex);
-        for(let i=0; i<moduleNames.lenght; i++){
+        for(let i=0; i<moduleNames.length; i++){
             const mats = await getTextFromIPFS(moduleMaterials[i]);
             const qs = await getTextFromIPFS(moduleQuestions[i]);
             const module: FrontendModule = {
@@ -109,14 +110,18 @@ const Request: React.FC = () => {
         getRequestSummary();
     }, [approvalSuccess]);
 
-    return <Container mt={5} maxW='1280px'>
+    return <Container mt={5} maxW='1280px' pb={'100px'}>
         <Flex justifyContent={'space-between'}>
             <Heading>Request</Heading>
-            {isMaintainer && !maintainerHasApproved && <Button onClick={approveRequest} colorScheme='green'>Vote to Request</Button>}
-            {(approvalSuccess || maintainerHasApproved)&& <Text colorScheme={'green'}>Vote approved</Text>}
+            {isMaintainer && !maintainerHasApproved && <Button isLoading={isApproving} onClick={approveRequest} colorScheme='green'>Vote to Request</Button>}
+            {(approvalSuccess || maintainerHasApproved)&& <Text color={'green.300'}>Vote approved</Text>}
         </Flex>
-        { !loading && requestSummary
-            ? <GeneralInfo requestSummary={requestSummary}/>
+        { !loading && requestSummary && request.length > 0
+            ? <>
+                <GeneralInfo requestSummary={requestSummary}/>
+                <Heading fontSize={25}>Modules</Heading>
+                {request.map((module) => <ModuleView module={module}/>)}
+            </>
             : <Center><Spinner size='xl'/></Center>}
     </Container>
 };

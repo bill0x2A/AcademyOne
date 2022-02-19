@@ -78,8 +78,8 @@ const CreateRequest: React.FC = () => {
         for(const module of modules) {
             names.push(module.name);
             descriptions.push(module.description);
-            const materialsURL = await uploadMarkdownData(module.materials.text);
-            const questionsURL = await uploadMarkdownData(module.questions.text);
+            const materialsURL = await uploadMarkdownData(module.materials);
+            const questionsURL = await uploadMarkdownData(module.questions);
             materials.push(materialsURL);
             questions.push(questionsURL);
         }
@@ -119,13 +119,13 @@ const CreateRequest: React.FC = () => {
 
     const handleMaterialsDataChange = (index: number, data: MarkdownData) => {
         const newModules = [...modules];
-        newModules[index].materials = data;
+        newModules[index].materials = data.text;
         setModules(newModules);
     };
 
     const handleQuestionsDataChange = (index: number, data: MarkdownData) => {
         const newModules = [...modules];
-        newModules[index].questions = data;
+        newModules[index].questions = data.text;
         setModules(newModules);
     };
 
@@ -141,7 +141,7 @@ const CreateRequest: React.FC = () => {
         const [names, descriptions, materials, questions] = returnedModules;
         for(let i=0; i < names.length; i++) {
             const materialsText: string = await getTextFromIPFS(materials[i]);
-            const questionsText: string = await getTextFromIPFS(questions[i])
+            const questionsText: string = await getTextFromIPFS(questions[i]);
             const module = {
                 id: uuid(),
                 name: names[i],
