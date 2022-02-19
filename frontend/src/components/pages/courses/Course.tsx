@@ -9,7 +9,6 @@ import {
     Text,
     Heading,
     Stack,
-    Avatar,
     useColorModeValue,
 } from '@chakra-ui/react';
 import styles from './Course.module.sass';
@@ -38,27 +37,26 @@ const Course: React.FC<CourseProps> = ({
 
     return <Center py={6}>
         <Box
+        position='relative'
+        top={'0px'}
+        transition='all 200ms'
         maxW={'550px'}
         w={'full'}
-        bg={useColorModeValue('white', 'gray.900')}
         boxShadow={'2xl'}
         rounded={'md'}
-        p={6}
         overflow={'hidden'}
         onClick={navigateToCourseHomepage}
-        className={styles.course}>
+        className={styles.course}
+        _hover={{
+            top: '-4px',
+        }}>
         <Box
-            // h={'380px'}
-            bg={'gray.100'}
-            mt={-6}
-            mx={-6}
-            mb={6}
+            height='350px'
+            backgroundImage={imageURL}
+            backgroundSize='cover'
             pos={'relative'}>
-            <Image
-                src={imageURL}
-                objectFit={'fill'}
-            />
         </Box>
+        <Box bg={'secondary'} p={6} borderTop={'3px solid white'}>
         <Stack>
             <Text
                 color={'green.500'}
@@ -69,21 +67,22 @@ const Course: React.FC<CourseProps> = ({
             Course
             </Text>
             <Heading
-                color={useColorModeValue('gray.700', 'white')}
+                color={'white'}
                 fontSize={'2xl'}
                 fontFamily={'body'}>
                 {name}
             </Heading>
-            <Text color={'gray.500'}>
+            <Text color={'gray.200'}>
                 {description}
             </Text>
         </Stack>
         <Stack mt={6} direction={'row'} spacing={4} align={'center'}>
-                <Identicon address={address} size={40}/>
+                <Indenticon className={styles.identicon} address={address} size={40}/>
             <Stack direction={'column'} spacing={0} fontSize={'sm'}>
                 <Text fontWeight={600}>{author}</Text>
             </Stack>
         </Stack>
+        </Box>
         </Box>
     </Center>
 }

@@ -109,11 +109,13 @@ const Request: React.FC = () => {
         getRequestSummary();
     }, [approvalSuccess]);
 
-    return <Container mt={5} maxW='1280px' pb={'100px'}>
+    return <Container mt={'50px'} maxW='1280px' pb={'100px'}>
         <Flex justifyContent={'space-between'}>
-            <Heading>Request</Heading>
+            <Heading>Course Pull Request</Heading>
             {isMaintainer && !maintainerHasApproved && <Button isLoading={isApproving} onClick={approveRequest} colorScheme='green'>Vote to Request</Button>}
-            {(approvalSuccess || maintainerHasApproved)&& <Text color={'green.300'}>Vote approved</Text>}
+            {(approvalSuccess || maintainerHasApproved) && <Flex p={3} px={5} border={'2px solid white'} bg={'green.400'}>
+                <Text color={'white'}>Vote approved</Text>
+            </Flex>}
         </Flex>
         { !loading && requestSummary && request.length > 0
             ? <>

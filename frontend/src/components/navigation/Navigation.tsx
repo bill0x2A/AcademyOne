@@ -29,10 +29,11 @@ const NavLink = ({ children, path }: { children: React.ReactNode, path: string }
   return   <Link
       px={2}
       py={1}
+      ml={'5px'}
       rounded={'md'}
       _hover={{
         textDecoration: 'none',
-        bg: useColorModeValue('gray.200', 'gray.700'),
+        bg: 'secondary',
       }}
       onClick={() => navigate(path)}>
       {children}
@@ -45,7 +46,6 @@ interface NavProps {
 const Nav: React.FC<NavProps> = ({
   connectWallet,
 }: NavProps) => {
-  const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const address = useAddress();
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const Nav: React.FC<NavProps> = ({
 
   return (
     <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+      <Box px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <Stack
             onClick={navigateToHomepage} 
@@ -67,7 +67,10 @@ const Nav: React.FC<NavProps> = ({
             borderRadius={'sm'}
             px={4}
             py={2}
-            cursor={'pointer'}>
+            cursor={'pointer'}
+            _hover={{
+              background: 'secondary'
+            }}>
             <GiSpellBook size={20}/>
             <Box>AcademyONE</Box>
           </Stack>
@@ -79,9 +82,6 @@ const Nav: React.FC<NavProps> = ({
 
           <Flex alignItems={'center'}>
             <Stack direction={'row'} spacing={7}>
-              <Button onClick={toggleColorMode}>
-                {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-              </Button>
 
               { isWalletConnected ?
                 <Menu>

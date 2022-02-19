@@ -20,7 +20,7 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({
         approved,
         tokens,
     } = requestSummary;
-    return <Box mt={10} position='relative' p={5} pt='100px'>
+    return <Box my={10} position='relative' pt='100px'>
         <Heading>{name}</Heading>
         <Box
             color={'white'}
@@ -34,8 +34,8 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({
             {approved ? 'Approved' : 'Open'}
         </Box>
         <Text>{description}</Text>
-        <Text>{`${approvers} votes`}</Text>
-        <Text>{`${tokens}/1000 requested share`}</Text>
+        <Text display='inline-block' my={2} px={3} py={1} background={'tertiary'} border={'2px solid white'} fontWeight={600}>{`${approvers} votes`}</Text>
+        <Text display='inline-block' ml={5} my={2} px={3} py={1} background={'tertiary'} border={'2px solid white'} fontWeight={600}>{`${tokens} / 1000 requested share`}</Text>
     </Box>
 };
 

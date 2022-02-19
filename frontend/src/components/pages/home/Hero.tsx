@@ -27,17 +27,17 @@ const Hero: React.FC = () => {
               position: 'absolute',
               bottom: 1,
               left: 0,
-              bg: 'blue.400',
+              bg: 'tertiary',
               zIndex: -1,
             }}>
             Education
           </Text>
           <br />{' '}
-          <Text color={'blue.400'} as={'span'}>
+          <Text color={'tertiary'} as={'span'}>
             Done differently
           </Text>{' '}
         </Heading>
-        <Text fontSize={{ base: 'md', lg: 'lg' }} color={'gray.500'}>
+        <Text fontSize={{ base: 'md', lg: 'lg' }} color={'white'}>
             EduDAO aims to change the way we collate and share information with eachother.
             Earn by contributing to or maintaining courses.
         </Text>
@@ -45,10 +45,10 @@ const Hero: React.FC = () => {
           <Button
             onClick={() => navigate('/courses')}
             rounded={'full'}
-            bg={'blue.400'}
+            bg={'tertiary'}
             color={'white'}
             _hover={{
-              bg: 'blue.500',
+              bg: 'tertiary',
             }}>
             View Courses
           </Button>

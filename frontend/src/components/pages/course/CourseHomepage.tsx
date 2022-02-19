@@ -127,7 +127,7 @@ const CourseHomepage: React.FC = () => {
 
     return <Container maxW={'1280px'} pb={20}>
         <Flex justifyContent={'space-between'} py={8}>
-            <Heading>{name}</Heading>
+            <Heading color='white'>{name}</Heading>
             <Stack>
                 <Text my={0}>Creator</Text>
                 <UserDisplay address={author}/>
@@ -149,14 +149,17 @@ const CourseHomepage: React.FC = () => {
             mb={6}>
         </Box>
         <Text mb={10}>{description}</Text>
-        <Heading>Modules</Heading>
+        <Heading mb={5}>Modules</Heading>
         <hr/>
         {modules.map((module) => <ModulePreview key={module.id} module={module}/>)}
         <Flex justifyContent='flex-end'>
             <Enroll courseAddress={courseAddress || '0x0'}/>
-            <Button ml={5} onClick={submitPullRequestHandler}>Submit Pull Request</Button>
         </Flex>
-        <Heading my={10}>Pull Requests</Heading>
+
+        <Flex  mt={8} justifyContent={'space-between'} alignItems='center'>
+            <Heading my={10}>Pull Requests</Heading>
+            <Button bg='tertiary' ml={5} onClick={submitPullRequestHandler}>Submit Pull Request</Button>
+        </Flex>
         <hr/>
         {requestsAreLoading
          ? <Center><Spinner size={'xl'}/></Center>
