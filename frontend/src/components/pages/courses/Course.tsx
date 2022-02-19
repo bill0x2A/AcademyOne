@@ -37,19 +37,19 @@ const Course: React.FC<CourseProps> = ({
 
     return <Center py={6}>
         <Box
-        position='relative'
-        top={'0px'}
-        transition='all 200ms'
-        maxW={'550px'}
-        w={'full'}
-        boxShadow={'2xl'}
-        rounded={'md'}
-        overflow={'hidden'}
-        onClick={navigateToCourseHomepage}
-        className={styles.course}
-        _hover={{
-            top: '-4px',
-        }}>
+            position='relative'
+            top={'0px'}
+            transition='all 200ms'
+            maxW={'550px'}
+            w={'full'}
+            boxShadow={'2xl'}
+            rounded={'md'}
+            overflow={'hidden'}
+            onClick={navigateToCourseHomepage}
+            className={styles.course}
+            _hover={{
+                top: '-4px',
+            }}>
         <Box
             height='350px'
             backgroundImage={imageURL}

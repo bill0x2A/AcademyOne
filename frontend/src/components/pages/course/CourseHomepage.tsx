@@ -134,7 +134,7 @@ const CourseHomepage: React.FC = () => {
             </Stack>
             <Stack>
                     <Text my={0}>Version</Text>
-            <Select onChange={selectVersionHandler}>
+            <Select bg={'tertiary'} onChange={selectVersionHandler}>
                     {versions.map((version) => <option value={version}>{version}</option>)}
                 </Select>
             </Stack>

@@ -13,7 +13,7 @@ import education from '../../../images/svg/education.svg';
 
 const Hero: React.FC = () => {
     const navigate = useNavigate();
-    return  <Flex my={'100px'}>
+    return  <Flex my={'140px'}>
     <Flex p={8} flex={1} alignItems={'center'} justify={'center'}>
       <Stack spacing={6} w={'full'} maxW={'lg'}>
         <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>

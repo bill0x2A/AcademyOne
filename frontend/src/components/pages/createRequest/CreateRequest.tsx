@@ -213,7 +213,7 @@ const CreateRequest: React.FC = () => {
             <Box borderTop={'2px solid white'} width={'100%'} height={'20px'}/>
             <Stack mb={5} >
                     <Text my={0}> Base Version</Text>
-                <Select onChange={selectVersionHandler}>
+                <Select  bg={'tertiary'} onChange={selectVersionHandler}>
                     {versions.map((version) => <option key={version} value={version}>{version}</option>)}
                 </Select>
             </Stack>
@@ -221,11 +221,11 @@ const CreateRequest: React.FC = () => {
                 ? <Center minHeight={'calc(100vh - 200px)'}><Spinner size={'xl'}/></Center>
                 : <>
                     <FormLabel>PR Title</FormLabel>
-                    <Input mb={5} value={title} onChange={onChangeTitleHandler}/>
+                    <Input bg={'tertiary'} mb={5} value={title} onChange={onChangeTitleHandler}/>
                     <FormLabel>Description of changes</FormLabel>
-                    <Input mb={5}  value={description} onChange={onChangeDescriptionHandler}/>
+                    <Input  bg={'tertiary'} mb={5}  value={description} onChange={onChangeDescriptionHandler}/>
                     <FormLabel>Requested course shares (out of 1000 total)</FormLabel>
-                    <Input type='number' max={1000} mb={5} value={tokens} onChange={onChangeTokensHandler}/>
+                    <Input bg={'tertiary'} type='number' max={1000} mb={5} value={tokens} onChange={onChangeTokensHandler}/>
                     <Box borderTop={'2px solid white'} mt={20} width={'100%'} height={'20px'}/>
                     <AddModules
                         modules={modules}
