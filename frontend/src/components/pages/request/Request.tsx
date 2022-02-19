@@ -19,7 +19,6 @@ import GeneralInfo from './GeneralInfo';
 import { useAddress } from '../../../context/Address';
 import { usePrevious } from '../../../hooks';
 
-
 const Request: React.FC = () => {
 
     //Hooks
