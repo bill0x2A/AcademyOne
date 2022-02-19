@@ -7,7 +7,6 @@ import {
     Flex,
 } from '@chakra-ui/react';
 import { usePrevious } from '../../../hooks';
-import StorageClient from '../../web3/StorageClient';
 import { create } from 'ipfs-http-client'
 
 const client = create({url: 'https://ipfs.infura.io:5001/api/v0'});
