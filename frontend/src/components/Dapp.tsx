@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { ethers } from 'ethers';
-import { Web3Storage } from 'web3.storage'
 import { Routes, Route } from 'react-router';
-import TokenArtifact from '../contracts/Token.json';
-import contractAddress from '../contracts/contract-address.json';
 import NoWalletDetected from './NoWalletDetected';
 import { RINKEBY_NETWORK_ID, HARDHAT_NETWORK_ID } from '../constants/chain';
 import { AddressProvider } from '../context/Address';
 import { SignerProvider } from '../context/Signer';
 import { ProviderProvider } from '../context/Provider';
-import { ContractProvider } from '../context/Contract';
-import { StorageProvider } from'../context/Storage';
 import Navigation from './navigation/Navigation';
 import Home from './pages/home/Home';
 import Courses from './pages/courses/Courses';
@@ -30,9 +25,6 @@ const Dapp: React.FC = () => {
   const [networkError, setNetworkError] = React.useState<string>();
   const [provider, setProvider] = React.useState<ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider>();
   const [signer, setSigner] = React.useState<ethers.Signer>();
-
-  const web3StorageAPIKey = process.env.SNOWPACK_PUBLIC_STORAGE_API_KEY || '';
-  const storage = new Web3Storage({ token: web3StorageAPIKey })
 
   const resetState = () => {
     console.log('resetting state');
@@ -120,7 +112,6 @@ const Dapp: React.FC = () => {
     <ProviderProvider value={provider}>
       <SignerProvider value={signer}>
           <AddressProvider value={selectedAddress}>
-            <StorageProvider value={storage}>
                 <Navigation connectWallet={connectWallet}/>
                 <Routes>
                   <Route path='/' element={<Home/>}/>
@@ -130,7 +121,6 @@ const Dapp: React.FC = () => {
                   <Route path='/courses' element={<Courses/>}/>
                   <Route path='/create' element={<Create/>}/>
                 </Routes>
-            </StorageProvider>
           </AddressProvider>
       </SignerProvider>
     </ProviderProvider>
