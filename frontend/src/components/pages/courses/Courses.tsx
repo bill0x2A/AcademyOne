@@ -17,6 +17,7 @@ import { FACTORY_ADDRESS } from '../../../constants/chain';
 const Courses: React.FC = () => {
     const courseFactory = useCourseFactory(FACTORY_ADDRESS);
     const provider = useProvider();
+    console.log(provider);
     const signer = useSigner();
     const [courseAddresses, setCourseAddresses] = React.useState<string[]>([]);
     const [courses, setCourses] = React.useState<CourseSummary[]>([]);

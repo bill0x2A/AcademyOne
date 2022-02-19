@@ -47,10 +47,13 @@ const Dapp: React.FC = () => {
     return false;
   }
 
+  const initializeProvider = () => {
+    const infuraProvider = new ethers.providers.InfuraProvider('rinkeby', {projectId: 'dc71b76f925b44fa80b501543e747644', projectSecret: 'e0807351b84347bb947c826e7ba09816'});
+    setProvider(infuraProvider);
+  }
+
   const initializeEthers = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-    const infuraProvider = new ethers.providers.JsonRpcProvider('wss://rinkeby.infura.io/ws/v3/35024bbe8b9b4511bb92a9ea08119f69');
-    setProvider(infuraProvider);
     setSigner(provider.getSigner(0));
   }
 
@@ -105,6 +108,10 @@ const Dapp: React.FC = () => {
       initializeEthers();
     }
   }, [selectedAddress])
+
+  React.useEffect(() => {
+    initializeProvider();
+  }, []);
 
   if (window.ethereum === undefined) return <NoWalletDetected/>
 
