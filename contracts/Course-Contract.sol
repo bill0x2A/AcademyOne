@@ -27,6 +27,7 @@ contract CourseContract {
         bool confirmed;
         uint tokens;
         uint approvers;
+        uint baseVersion;
     }
 
     string public courseName;
@@ -36,8 +37,10 @@ contract CourseContract {
     uint public requestIndex;
     uint public coursePrice;
     uint public numOfMaintainers;
+    uint public tokenPot;
     address public author;
     address public manager;
+    address public dadAddress;
     Request[] public listOfRequests;
     Module[] public modulesToPush;
     Module[] public currentModules;
@@ -46,6 +49,10 @@ contract CourseContract {
     mapping(uint=>Module[]) public requestModules;
     mapping(uint=>Module[]) public moduleVersions;
     mapping(uint => mapping(address=>bool)) public maintainerVotes;
+    mapping(address=>uint) public allowance;
+    mapping(address=>bool) public enrolled;
+    mapping(uint256=>address) tokenHolders;
+    uint256 tokenHoldersCounter;
     
     modifier restricted() {
         //restricted requires either a manager or maintainer to operate the function
@@ -53,11 +60,24 @@ contract CourseContract {
         _;
     }
 
+    modifier hasTokens() {
+        //restricted requires either a manager or maintainer to operate the function
+        require(balance[msg.sender] > 0);
+        _;
+    }
+
+    modifier isEnrolled() {
+        require(enrolled[msg.sender]==true);
+        _;
+    }
+
+
     constructor(
         address _manager,
         string memory name,
         string memory description,
         string memory imageHash,
+        uint price,
         string[] memory moduleNames,
         string[] memory moduleDescriptions,
         string[] memory materialHashes,
@@ -65,15 +85,23 @@ contract CourseContract {
     {
         //contructor sets manager as contract creator
         manager = _manager;
+        tokenHoldersCounter = 1;
+        tokenHolders[0] = manager;
         index = 0;
         requestIndex = 0;
         numOfMaintainers = 1;
-        balance[manager] = 1000;
+        balance[manager] = 500;
+        tokenPot = 500;
+        dadAddress = msg.sender;
         courseName = name;
         courseDescription = description;
         courseImageHash = imageHash;
+        coursePrice = price;
         addInitialModules(moduleNames, moduleDescriptions, materialHashes, questionHashes);
     }
+
+    receive() external payable {}
+    fallback() external payable {}
 
     function getSummaryInformation() public view returns (
         string memory,
@@ -89,13 +117,15 @@ contract CourseContract {
         );
     }
 
-    function addMaintainer(address newMaintainer) public restricted() {
+    function addMaintainer(address newMaintainer, uint amount) public restricted() {
         require(maintainers[newMaintainer] != true);
         //Add a signal here to tell Ux that this address is already a maintainer
-
+        transferToken(newMaintainer, amount);
         //adds new maintainer to the mapping with positive boolean value pair
         maintainers[newMaintainer] = true;
+        tokenHolders[tokenHoldersCounter] = newMaintainer;
         numOfMaintainers++;
+        tokenHoldersCounter++;
     }
 
     function addInitialModules(
@@ -168,7 +198,8 @@ contract CourseContract {
         string[] memory _moduleNames,
         string[] memory _moduleDescriptions,
         string[] memory _materialsHash,
-        string[] memory _questionsHash
+        string[] memory _questionsHash,
+        uint _baseVersion
     ) public {
 
         Request memory newRequest = Request({
@@ -177,7 +208,8 @@ contract CourseContract {
             author: msg.sender,
             confirmed: false,
             tokens: _tokens,
-            approvers: 0
+            approvers: 0,
+            baseVersion: _baseVersion
         });
 
         listOfRequests.push(newRequest);
@@ -202,7 +234,7 @@ contract CourseContract {
         maintainerVotes[ID][msg.sender] = true;
         Request storage request = listOfRequests[ID];
         request.approvers++;
-        if (request.approvers > numOfMaintainers) {
+        if (request.approvers >= numOfMaintainers) {
             approveRequest(ID);
         }
     }
@@ -232,9 +264,11 @@ contract CourseContract {
         }
 
         pushModules(names, descriptions, materialHashes, questionHashes);
+        tokenHolders[tokenHoldersCounter] = request.author;
+        tokenHoldersCounter++;
     }
 
-    function returnRequest(uint ID) public view returns(
+    function returnRequestModules(uint ID) public view returns(
         string[] memory _moduleNames,
         string[] memory _moduleDescs,
         string[] memory _moduleMaterials,
@@ -257,32 +291,69 @@ contract CourseContract {
             materials[i] = module.materialsHash;
             questions[i] = module.questionsHash;
         }
-        returnRequestTokens(ID);
         return(names, descriptions, materials, questions);
     }
-    function returnRequestTokens(uint ID) public view returns(
+
+    function returnRequestSummary(uint ID) public view returns(
         string[2] memory,
         address,
         bool,
-        uint[2] memory
+        uint[3] memory
         ){
             Request memory request = listOfRequests[ID];
             string[2] memory nameDesc = [request.name,request.description];
-            uint[2] memory tokensApprovers = [request.tokens, request.approvers];
+            uint[3] memory tokensApprovers = [request.tokens, request.approvers, request.baseVersion];
 
             return(nameDesc, request.author, request.confirmed, tokensApprovers);
         }
     
-    function setAllowance() public {
+    function setAllowance(address sender, uint _amount) public hasTokens{
         //Should change someone's allowance based on their token changing, or the current pot changing, or the tokens available changing
-
+        allowance[sender] += (balance[sender]/(1000-tokenPot))*_amount;
     }
 
-    function setCoursePrice() public restricted{
+    function updateAllowances() public {
+        
+    }
+
+    function setCoursePrice(uint price) public restricted{
         //maintainers can change the price of the course at any time
+        coursePrice = price;
     }
 
-    function tokenTransfer() public {
+    function transferToken(address _To, uint _amount) public hasTokens{
         //anyone can transfer their tokens(stake) of the course to anyone else.
+        require(balance[msg.sender] >= _amount);
+        balance[msg.sender] -= _amount;
+        balance[_To] += _amount;
+    }
+
+    function transferTokenPot(address _To, uint _amount) public restricted{
+        require(tokenPot >= _amount);
+        tokenPot -= _amount;
+        balance[_To] += _amount;
+    }
+
+    function withdraw() external payable isEnrolled{
+        uint banked = allowance[msg.sender];
+        require(banked > 0);
+        //some kind of logic to send from contract pot to msg.sender address
+        require(banked <= getBalance());
+        payable(msg.sender).transfer(banked);
+        //reduces allowance to zero after withdraw has occured
+        allowance[msg.sender] = 0;
+    }
+
+    function getBalance() public view returns (uint) {
+        return address(this).balance;
+    }
+
+    function enroll(address _student) external payable {
+        require(msg.sender == dadAddress);
+        require(msg.value >= coursePrice);
+        (bool sent, bytes memory data) = payable(address(this)).call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
+        enrolled[_student] = true;
+
     }
 }
