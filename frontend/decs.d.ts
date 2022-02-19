@@ -4,7 +4,7 @@ declare module "react-rich-diff";
 
 declare module "markup-it";
 
-declare module "markup-it/libs/markdown"
+declare module "markup-it/libs/markdown";
 
 declare module "*.svg" {
     const content: any;

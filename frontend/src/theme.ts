@@ -14,6 +14,7 @@ const theme = extendTheme({
         global: {
             'html, body': {
                 background: '#EF6461',
+                'min-height': '100vh',
                 'font-family': 'Space Grotesk',
                 transition: 'all 300ms',
             } 

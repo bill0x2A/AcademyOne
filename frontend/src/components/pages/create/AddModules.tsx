@@ -29,7 +29,7 @@ const AddModules: React.FC<AddModulesProps> = ({
 }: AddModulesProps) => {
 
     return <>
-        <Flex mt={20} justifyContent={'flex-end'}>
+        <Flex mt={10} justifyContent={'flex-end'}>
             <Button
                 colorScheme={'purple'}
                 rightIcon={<FiPlus/>}

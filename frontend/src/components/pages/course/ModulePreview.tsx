@@ -18,10 +18,9 @@ const ModulePreview: React.FC<ModulePreviewProps> = ({
         description,
     } = module;
     return <Flex
-        borderRadius={'5px'}
         my={5}
         flexDirection={'column'}
-        border='3px solid white'
+        border='2px solid white'
         color={'white'}
         px={5}
         py={15}>

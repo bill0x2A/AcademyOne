@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { ethers } from 'ethers';
 import { Routes, Route } from 'react-router';
+import {
+  Box,
+} from '@chakra-ui/react';
 import NoWalletDetected from './NoWalletDetected';
 import { RINKEBY_NETWORK_ID, HARDHAT_NETWORK_ID } from '../constants/chain';
 import { AddressProvider } from '../context/Address';
@@ -12,8 +15,10 @@ import Courses from './pages/courses/Courses';
 import Course from './pages/course/CourseHomepage';
 import Create from './pages/create/Create';
 import Request from './pages/request/Request';
+import Footer from './ui/Footer';
 import { CustomWindow } from '../types';
 import CreateRequest from './pages/createRequest/CreateRequest';
+import Roadmap from './pages/roadmap/Roadmap';
 
 declare let window: CustomWindow;
 
@@ -120,14 +125,18 @@ const Dapp: React.FC = () => {
       <SignerProvider value={signer}>
           <AddressProvider value={selectedAddress}>
                 <Navigation connectWallet={connectWallet}/>
-                <Routes>
-                  <Route path='/' element={<Home/>}/>
-                  <Route path='/courses/:courseAddress' element={<Course/>}/>
-                  <Route path='/courses/:courseAddress/newrequest' element={<CreateRequest/>}/>
-                  <Route path='/courses/:courseAddress/requests/:requestIndex' element={<Request/>}/>
-                  <Route path='/courses' element={<Courses/>}/>
-                  <Route path='/create' element={<Create/>}/>
-                </Routes>
+                <Box pb={'300px'}>
+                  <Routes>
+                    <Route path='/' element={<Home/>}/>
+                    <Route path='/courses/:courseAddress' element={<Course/>}/>
+                    <Route path='/courses/:courseAddress/newrequest' element={<CreateRequest/>}/>
+                    <Route path='/courses/:courseAddress/requests/:requestIndex' element={<Request/>}/>
+                    <Route path='/courses' element={<Courses/>}/>
+                    <Route path='/create' element={<Create/>}/>
+                    <Route path='/roadmap' element={<Roadmap/>}/>
+                  </Routes>
+                </Box>
+                <Footer/>
           </AddressProvider>
       </SignerProvider>
     </ProviderProvider>

@@ -24,6 +24,7 @@
     "markup-it": "^13.0.0",
     "query-string": "^7.1.1",
     "react": "^17.0.2",
+    "react-chrono": "^1.14.0",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.27.0",
     "react-icons": "^4.3.1",

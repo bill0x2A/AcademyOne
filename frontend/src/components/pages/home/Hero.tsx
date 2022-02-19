@@ -13,8 +13,8 @@ import education from '../../../images/svg/education.svg';
 
 const Hero: React.FC = () => {
     const navigate = useNavigate();
-    return  <Stack minH={'200px'} direction={{ base: 'column', md: 'row' }}>
-    <Flex p={8} flex={2} align={'center'} justify={'center'}>
+    return  <Flex my={'100px'}>
+    <Flex p={8} flex={1} alignItems={'center'} justify={'center'}>
       <Stack spacing={6} w={'full'} maxW={'lg'}>
         <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
           <Text
@@ -23,7 +23,7 @@ const Hero: React.FC = () => {
             _after={{
               content: "''",
               width: 'full',
-              height: useBreakpointValue({ base: '20%', md: '30%' }),
+              height: '300px',
               position: 'absolute',
               bottom: 1,
               left: 0,
@@ -38,31 +38,35 @@ const Hero: React.FC = () => {
           </Text>{' '}
         </Heading>
         <Text fontSize={{ base: 'md', lg: 'lg' }} color={'white'}>
-            EduDAO aims to change the way we collate and share information with eachother.
+            AcademyONE aims to change the way we collate and share information with eachother.
             Earn by contributing to or maintaining courses.
         </Text>
         <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
           <Button
             onClick={() => navigate('/courses')}
-            rounded={'full'}
+            borderRadius={0}
             bg={'tertiary'}
+            border='2px solid white'
             color={'white'}
             _hover={{
               bg: 'tertiary',
             }}>
             View Courses
           </Button>
-          <Button rounded={'full'}>How It Works</Button>
+          <Button borderRadius={0} border='2px solid white'>How It Works</Button>
         </Stack>
       </Stack>
     </Flex>
     <Flex flex={1}>
       <Image
+        position='relative'
+        top="20px"
         alt={'Cover image'}
         src={education}
+        height="300px"
       />
     </Flex>
-  </Stack>
+    </Flex>
 }
 
 export default Hero;

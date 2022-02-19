@@ -35,10 +35,10 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({
     handleQuestionsDataChange,
     deleteModuleHandler,
 }) => {
-    return <Box background={'blue.700'} position='relative' border={'3px solid white'} py={8} px={5} my={5}>
+    return <Box background={'secondary'} position='relative' border={'3px solid white'} py={8} px={5} my={5}>
             <Button
             onClick={deleteModuleHandler}
-            colorScheme='red'
+            background='red'
             position='absolute'
             top={'-3px'}
             right={'-3px'}
