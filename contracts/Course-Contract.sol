@@ -315,10 +315,12 @@ contract CourseContract {
         allowance[sender] += (balance[sender]/(1000-tokenPot))*_amount;
     }
 
+
     function updateAllowances(uint _amount) public {
         for (uint i=0; i<tokenHoldersCounter; i++) {
             allowance[tokenHolders[i]] += (balance[tokenHolders[i]]/(1000-tokenPot))*_amount;
         } 
+
     }
 
     function setCoursePrice(uint price) public restricted{
@@ -331,12 +333,16 @@ contract CourseContract {
         require(balance[msg.sender] >= _amount);
         balance[msg.sender] -= _amount;
         balance[_To] += _amount;
+        tokenHolders[tokenHoldersCounter] = _To;
+        tokenHoldersCounter++;
     }
 
     function transferTokenPot(address _To, uint _amount) public restricted{
         require(tokenPot >= _amount);
         tokenPot -= _amount;
         balance[_To] += _amount;
+        tokenHolders[tokenHoldersCounter] = _To;
+        tokenHoldersCounter++;
     }
 
     function withdraw() external payable isEnrolled{
