@@ -152,6 +152,7 @@ const Create: React.FC = () => {
             title,
             description,
             imageURL,
+            0,
             names,
             descriptions,
             materials,

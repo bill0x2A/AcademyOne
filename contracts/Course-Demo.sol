@@ -103,7 +103,7 @@ contract CourseContract {
         );
     }
 
-    function addMaintainer(address newMaintainer, uint amount) external restricted() {
+    function addMaintainer(address newMaintainer) external restricted() {
         require(maintainers[newMaintainer] != true);
         //Add a signal here to tell Ux that this address is already a maintainer
         //adds new maintainer to the mapping with positive boolean value pair
@@ -285,9 +285,9 @@ contract CourseContract {
 
     function enroll(address _student) external payable {
         require(msg.sender == dadAddress);
-        require(msg.value >= coursePrice);
-        (bool sent, bytes memory data) = payable(address(this)).call{value: msg.value}("");
-        require(sent, "Failed to send Ether");
+        //require(msg.value >= coursePrice);
+        // (bool sent, bytes memory data) = payable(address(this)).call{value: msg.value}("");
+        // require(sent, "Failed to send Ether");
         enrolled[_student] = true;
     }
 }
