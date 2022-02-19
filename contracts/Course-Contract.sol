@@ -243,7 +243,9 @@ contract CourseContract {
         //Approves a request at index ID in list of requests array,
         //changes the approver address and confirmed boolean,
         //pushes all the new modules stored in request module mapping, into current modules array mapping.
+        
         Request storage request = listOfRequests[ID];
+        require(request.confirmed != true);
         request.confirmed = true;
 
         Module[] memory modules = requestModules[ID];
@@ -266,6 +268,7 @@ contract CourseContract {
         pushModules(names, descriptions, materialHashes, questionHashes);
         tokenHolders[tokenHoldersCounter] = request.author;
         tokenHoldersCounter++;
+        transferTokenPot(request.author, request.tokens);
     }
 
     function returnRequestModules(uint ID) public view returns(
@@ -312,8 +315,10 @@ contract CourseContract {
         allowance[sender] += (balance[sender]/(1000-tokenPot))*_amount;
     }
 
-    function updateAllowances() public {
-        
+    function updateAllowances(uint _amount) public {
+        for (uint i=0; i<tokenHoldersCounter; i++) {
+            allowance[tokenHolders[i]] += (balance[tokenHolders[i]]/(1000-tokenPot))*_amount;
+        } 
     }
 
     function setCoursePrice(uint price) public restricted{
@@ -354,6 +359,6 @@ contract CourseContract {
         (bool sent, bytes memory data) = payable(address(this)).call{value: msg.value}("");
         require(sent, "Failed to send Ether");
         enrolled[_student] = true;
-
+        updateAllowances(msg.value);
     }
 }
