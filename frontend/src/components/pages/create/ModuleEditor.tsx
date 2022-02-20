@@ -44,16 +44,16 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({
             right={'-3px'}
             borderRadius={0}
             border={'3px solid white'}>
-                <ImCross/>
+                <ImCross fill='white'/>
             </Button>
-        <FormLabel>Module Name</FormLabel>
+        <FormLabel color='white'>Module Name</FormLabel>
         <Input
             value={name}
             onChange={handleNameChange}
             background='white'
             color='black'
             mb={5}/>
-        <FormLabel>Module Description</FormLabel>
+        <FormLabel color='white'>Module Description</FormLabel>
         <Input
             value={description}
             onChange={handleDescriptionChange}
@@ -61,13 +61,13 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({
             background={'white'}
             color='black'
             mb={5}/>
-        <Text>Materials</Text>
+        <Text color='white'>Materials</Text>
         <MdEditor
             style={{ height: '500px' }}
             renderHTML={text => mdParser.render(text)}
             onChange={handleMaterialsDataChange}
             value={materials}/>
-        <Text mt={5}>Questions</Text>
+        <Text color='white' mt={5}>Questions</Text>
         <MdEditor
             style={{ height: '200px' }}
             renderHTML={text => mdParser.render(text)}

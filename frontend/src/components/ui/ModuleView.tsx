@@ -27,12 +27,12 @@ const ModuleView: React.FC<ModuleViewProps> = ({
             position='absolute'
             top={0}
             left={0}>{module.name}</Text>
-        <Text>{module.description}</Text>
-        <Text display={'inline-block'} border={'2px solid white'} px={2} py={1} mt={5}>Learning Materials</Text>
+        <Text color='white'>{module.description}</Text>
+        <Text color='white' display={'inline-block'} border={'2px solid white'} px={2} py={1} mt={5}>Learning Materials</Text>
         <Box p={5}>
             <ReactMarkdown>{module.materials}</ReactMarkdown>
         </Box>
-        <Text display={'inline-block'} border={'2px solid white'} px={2} py={1} mt={5}>Questions</Text>
+        <Text color='white' display={'inline-block'} border={'2px solid white'} px={2} py={1} mt={5}>Questions</Text>
         <Box p={5}>
             <ReactMarkdown>{module.questions}</ReactMarkdown>
         </Box>
