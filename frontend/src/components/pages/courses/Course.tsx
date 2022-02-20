@@ -57,7 +57,7 @@ const Course: React.FC<CourseProps> = ({
             pos={'relative'}>
         </Box>
         <Box bg={'secondary'} p={6} borderTop={'3px solid white'}>
-        <Stack>
+        <Stack height={'150px'}>
             <Text
                 color={'green.500'}
                 textTransform={'uppercase'}

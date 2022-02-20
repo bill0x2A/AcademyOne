@@ -77,7 +77,7 @@ const Nav: React.FC<NavProps> = ({
           </Stack>
           <Flex alignItems={'center'}>
             <NavLink path={'/courses'}>Courses</NavLink>
-            <NavLink path={'/about'}>About</NavLink>
+            {/* <NavLink path={'/about'}>About</NavLink> */}
             {address && <NavLink path={'/create'}>Create Course</NavLink>}
           </Flex>
 
@@ -94,7 +94,7 @@ const Nav: React.FC<NavProps> = ({
                     minW={0}>
                     <UserDisplay address={address}/>
                   </MenuButton>
-                  <MenuList alignItems={'center'}>
+                  <MenuList alignItems={'center'} px={3}>
                     <br />
                     <Center>
                       <Identicon string={address} size={100} styles={{background: 'white'}}></Identicon>
@@ -105,8 +105,6 @@ const Nav: React.FC<NavProps> = ({
                     </Center>
                     <br />
                     <MenuDivider />
-                    <MenuItem>Your Servers</MenuItem>
-                    <MenuItem>Account Settings</MenuItem>
                     <MenuItem>Logout</MenuItem>
                   </MenuList>
                 </Menu>
