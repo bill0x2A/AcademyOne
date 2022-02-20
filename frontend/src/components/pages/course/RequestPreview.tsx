@@ -50,13 +50,13 @@ const RequestPreview: React.FC<RequestPreviewProps> = ({
                 <UserDisplay address={author}/>
             </Stack>
         <Flex justifyContent={'space-between'}>
-            <Text fontSize={25}>{name}</Text>
+            <Text color='white' fontSize={25}>{name}</Text>
         </Flex>
-        <Text>{description}</Text>
+        <Text color='white'>{description}</Text>
         <Flex justifyContent='space-between' alignItems={'flex-end'} width='100%'>
             <Box  mt={5} border={'2px solid white'}>
                 <Stack py={1} px={3} bg='tertiary'>
-                    <Text  mb={0}>{`${approvers} votes`}</Text>
+                    <Text color='white' mb={0}>{`${approvers} votes`}</Text>
                 </Stack>
             </Box>
             <Button onClick={viewPRHandler}>View</Button>

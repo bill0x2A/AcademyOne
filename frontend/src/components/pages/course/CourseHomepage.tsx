@@ -10,7 +10,6 @@ import {
     Select,
     Center,
     Spinner,
-    Link,
 } from '@chakra-ui/react';
 import { v4 as uuid } from 'uuid';
 import UserDisplay from '../../ui/UserDisplay';
@@ -21,6 +20,7 @@ import ModulePreview from './ModulePreview';
 import RequestPreview from './RequestPreview';
 import { AiOutlineDoubleRight } from 'react-icons/ai';
 import { ethers } from 'ethers';
+import { useAddress } from '../../../context/Address';
 import { useCourseFactory } from '../../web3/useCourseFactoryContract';
 import { FACTORY_ADDRESS } from '../../../constants/chain';
 import { usePrevious } from '../../../hooks';
@@ -49,6 +49,7 @@ const CourseHomepage: React.FC = () => {
     const { courseAddress } = useParams();
     const contract = useCourseContract(courseAddress || '0x0');
     const dadContract = useCourseFactory(FACTORY_ADDRESS);
+    const address = useAddress();
 
     //Conditions
 
@@ -151,7 +152,7 @@ const CourseHomepage: React.FC = () => {
 
     React.useEffect(() => {
         if (!isEnrolling && wasEnrolling) setHasEnrolled(true);
-    }, [isEnrolling]);
+    }, [isEnrolling, address]);
 
     const {
         name,
@@ -164,7 +165,7 @@ const CourseHomepage: React.FC = () => {
         <Flex justifyContent={'space-between'} py={8}>
             <Heading color='white'>{name}</Heading>
             <Stack>
-                <Text my={0}>Creator</Text>
+                <Text color='white' my={0}>Creator</Text>
                 <UserDisplay address={author}/>
             </Stack>
             <Stack>
@@ -181,10 +182,11 @@ const CourseHomepage: React.FC = () => {
             boxSize={'xl'}
             width={'100%'}
             overflow={'hidden'}
-            mb={6}>
+            mb={6}
+            color='white'>
         </Box>
-        <Text mb={10}>{description}</Text>
-        <Heading mb={5}>Modules</Heading>
+        <Text color='white' mb={10}>{description}</Text>
+        <Heading color='white' mb={5}>Modules</Heading>
         <hr/>
         {modules.map((module) => <ModulePreview key={module.id} module={module}/>)}
         <Flex justifyContent='flex-end' mt={5}>
@@ -192,6 +194,7 @@ const CourseHomepage: React.FC = () => {
                 ? <Stack>
                         <Flex border={'2px solid white'} px={5} py={2} bg={'green.600'} color='white'>You are enrolled on this course</Flex>
                         <Button
+
                             rightIcon={<AiOutlineDoubleRight/>}
                             onClick={() => navigate(`/courses/${courseAddress}/version/${selectedVersion}`)}>
                             Go to course
@@ -201,8 +204,8 @@ const CourseHomepage: React.FC = () => {
         </Flex>
 
         <Flex  mt={8} justifyContent={'space-between'} alignItems='center'>
-            <Heading my={10}>Pull Requests</Heading>
-            <Button bg='tertiary' ml={5} onClick={submitPullRequestHandler}>Submit Pull Request</Button>
+            <Heading color='white' my={10}>Pull Requests</Heading>
+            <Button color='white' bg='tertiary' ml={5} onClick={submitPullRequestHandler}>Submit Pull Request</Button>
         </Flex>
         <hr/>
         {requestsAreLoading

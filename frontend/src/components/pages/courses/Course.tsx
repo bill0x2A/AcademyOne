@@ -79,7 +79,7 @@ const Course: React.FC<CourseProps> = ({
         <Stack mt={6} direction={'row'} spacing={4} align={'center'}>
                 <Indenticon className={styles.identicon} address={address} size={40}/>
             <Stack direction={'column'} spacing={0} fontSize={'sm'}>
-                <Text fontWeight={600}>{author}</Text>
+                <Text color='white' fontWeight={600}>{author}</Text>
             </Stack>
         </Stack>
         </Box>

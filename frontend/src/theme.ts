@@ -2,6 +2,12 @@ import { extendTheme } from '@chakra-ui/react'
 
 // 3. extend the theme
 const theme = extendTheme({
+    heading: {
+        default: 'white',
+    },
+    text: {
+        default: 'white',
+    },
     fonts: {
         heading: 'Space Grotesk',
     },

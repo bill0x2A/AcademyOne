@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router';
 const NavLink = ({ children, path }: { children: React.ReactNode, path: string }) => {
     const navigate = useNavigate(); 
     return   <Link
+        color='white'
         px={2}
         py={1}
         ml={'5px'}
@@ -30,7 +31,7 @@ const Footer: React.FC = () => {
                 <NavLink path={'/roadmap'}>Roadmap</NavLink>
                 <NavLink path={'/about'}>About</NavLink>
             </Flex>
-            <Text>
+            <Text color='white'>
                 {'Made with ❤️ && 😭 for EthDenver 2022'}
             </Text>
         </Flex>

@@ -62,7 +62,7 @@ const Courses: React.FC = () => {
     }, [courseAddresses]);
 
     return <Container maxW={'1280px'} my={10}>
-        <Heading>
+        <Heading color={'white'}>
             Courses
         </Heading>
         {shouldShowCoursesLoading
