@@ -186,7 +186,7 @@ const Create: React.FC = () => {
     }
 
     return <Container maxW={'1280px'} pb={20}>
-            <Heading my={6}>Create a new course</Heading>
+            <Heading color='white' my={6}>Create a new course</Heading>
             <br/>
             {subpage}
             <br/>
@@ -205,7 +205,7 @@ const Create: React.FC = () => {
                     onClick={createCourse}
                     colorScheme={'green'}
                     >Create</Button>}
-                {creationSucessful && <Text color={'green.500'}>Success!!! (I think)</Text>}
+                {creationSucessful && <Flex border='2px solid white' my={5} py={2} px={4} color='white' alignItems={'center'} justifyContent='center' bg={'green.600'}>Success</Flex>}
             </Flex>
     </Container>;
 }
