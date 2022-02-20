@@ -158,7 +158,6 @@ const Create: React.FC = () => {
             materials,
             questions,
         );
-        console.log(tx);
         setIsCreating(false);
     }
 

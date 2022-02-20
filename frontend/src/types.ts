@@ -44,6 +44,7 @@ export interface PullRequest {
     approved: boolean;
     tokens: number;
     approvers: number;
+    baseVersion: number;
 }
 
 export interface CustomWindow extends Window {

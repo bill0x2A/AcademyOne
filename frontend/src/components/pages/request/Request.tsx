@@ -40,7 +40,7 @@ const Request: React.FC = () => {
 
     //Methods
     const getRequestSummary = async() => {
-        const [[name, description], author, approved, [bigTokens, bigApprovers]] = await contract.returnRequestTokens(requestIndex);
+        const [[name, description], author, approved, [bigTokens, bigApprovers, baseVersion]] = await contract.returnRequestSummary(requestIndex);
         const req: PullRequest = {
             name,
             description,
@@ -49,13 +49,14 @@ const Request: React.FC = () => {
             index: Number(requestIndex),
             tokens: bigTokens.toNumber(),
             approvers: bigApprovers.toNumber(), 
+            baseVersion: baseVersion.toNumber(),
         };
         setRequestSummary(req);
     };
 
     const getRequest = async() => { 
         const modulesToReturn: FrontendModule[] = [];
-        const [moduleNames, moduleDescs, moduleMaterials, moduleQuestions] = await contract.returnRequest(requestIndex);
+        const [moduleNames, moduleDescs, moduleMaterials, moduleQuestions] = await contract.returnRequestModules(requestIndex);
         for(let i=0; i<moduleNames.length; i++){
             const mats = await getTextFromIPFS(moduleMaterials[i]);
             const qs = await getTextFromIPFS(moduleQuestions[i]);

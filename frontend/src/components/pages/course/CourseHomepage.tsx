@@ -10,15 +10,20 @@ import {
     Select,
     Center,
     Spinner,
+    Link,
 } from '@chakra-ui/react';
 import { v4 as uuid } from 'uuid';
 import UserDisplay from '../../ui/UserDisplay';
 import { useCourseContract } from '../../web3/useCourse'
 import { useNavigate, useParams } from 'react-router';
 import { CourseSummary, FrontendModule, PullRequest } from '../../../types';
-import Enroll from '../../web3/Enroll';
 import ModulePreview from './ModulePreview';
 import RequestPreview from './RequestPreview';
+import { AiOutlineDoubleRight } from 'react-icons/ai';
+import { ethers } from 'ethers';
+import { useCourseFactory } from '../../web3/useCourseFactoryContract';
+import { FACTORY_ADDRESS } from '../../../constants/chain';
+import { usePrevious } from '../../../hooks';
 
 const CourseHomepage: React.FC = () => {
 
@@ -35,11 +40,18 @@ const CourseHomepage: React.FC = () => {
     const [selectedVersion, setSelectedVersion] = React.useState<number>();
     const [requests, setRequests] = React.useState<PullRequest[]>([]);
     const [requestsAreLoading, setRequestsAreLoading] = React.useState<boolean>(true);
+    const [isEnrolling, setIsEnrolling] = React.useState<boolean>(false);
+    const [hasEnrolled, setHasEnrolled] = React.useState<boolean>(false);
+    const wasEnrolling = usePrevious(isEnrolling);
 
     // Hooks
     const navigate = useNavigate();
     const { courseAddress } = useParams();
     const contract = useCourseContract(courseAddress || '0x0');
+    const dadContract = useCourseFactory(FACTORY_ADDRESS);
+
+    //Conditions
+
 
     // Methods
     const getCourseSummary = async (): Promise<void> => {
@@ -58,9 +70,9 @@ const CourseHomepage: React.FC = () => {
         });
     };
 
-    const getModules = async (version: number): Promise<void> => {
+    const getModules = async (): Promise<void> => {
         const modulesToReturn: FrontendModule[] = []
-        const [names, descriptions, materials, questions] = await contract.returnModules(0);
+        const [names, descriptions, materials, questions] = await contract.returnModules(selectedVersion);
         for(let i=0; i < names.length; i++) {
             const module = {
                 id: uuid(),
@@ -78,7 +90,7 @@ const CourseHomepage: React.FC = () => {
         const pullRequestsToReturn: PullRequest[] = [];
         const numberOfRequests = await contract.requestIndex();
         for(let i=0; i<numberOfRequests; i++) {
-            const [[name, description], author, approved, [bigTokens, bigApprovers]] = await contract.returnRequestTokens(i);
+            const [[name, description], author, approved, [bigTokens, bigApprovers, baseVersion]] = await contract.returnRequestSummary(i);
             pullRequestsToReturn.push({
                 name,
                 description,
@@ -87,6 +99,7 @@ const CourseHomepage: React.FC = () => {
                 index: i,
                 tokens: bigTokens.toNumber(),
                 approvers: bigApprovers.toNumber(), 
+                baseVersion: baseVersion.toNumber(),
             });
         }
         setRequests(pullRequestsToReturn);
@@ -94,29 +107,51 @@ const CourseHomepage: React.FC = () => {
     }
 
     const getLatestVersion = async (): Promise<void> => {
-        const version: number = await contract.index();
-        const possibleVersions = Array.from(Array(version + 1).keys())
+        const bigVersion: ethers.BigNumber = await contract.index();
+        const version = bigVersion.toNumber();
+        const possibleVersions = Array.from(Array(version).keys())
         setVersions(possibleVersions);
-        setSelectedVersion(version);
+        setSelectedVersion(version - 1);
     };
 
     const selectVersionHandler = (e: any): void => {
         setSelectedVersion(e.target.value);
-    }
+    };
 
     const submitPullRequestHandler = (): void => {
         navigate(`/courses/${courseAddress}/newrequest`);
     };
 
+    const onEnrollHandler = async(): Promise<void> => {
+        setIsEnrolling(true);
+        const tx = await dadContract.joinCourse(courseAddress);
+        setIsEnrolling(false);
+    };
+
+    const hasUserEnrolled = async(): Promise<void> => {
+        const userCourses: string[] = await dadContract.returnEnrolledCourses();
+        const ca = courseAddress || '';
+        const userHasEnrolled: boolean = userCourses
+            .map(uc => uc.toLowerCase())
+            .includes(ca.toLowerCase());
+
+        setHasEnrolled(userHasEnrolled);
+    };  
+
     React.useEffect(() => {
         getCourseSummary();
         getLatestVersion();
         getPullRequests();
+        hasUserEnrolled();
     }, []);
 
     React.useEffect(() => {
-        if (!!selectedVersion) getModules(selectedVersion);
+        if (selectedVersion !== undefined) getModules();
     }, [selectedVersion])
+
+    React.useEffect(() => {
+        if (!isEnrolling && wasEnrolling) setHasEnrolled(true);
+    }, [isEnrolling]);
 
     const {
         name,
@@ -133,8 +168,8 @@ const CourseHomepage: React.FC = () => {
                 <UserDisplay address={author}/>
             </Stack>
             <Stack>
-                    <Text my={0}>Version</Text>
-            <Select bg={'tertiary'} onChange={selectVersionHandler}>
+                <Text my={0}>Version</Text>
+                <Select bg={'tertiary'} onChange={selectVersionHandler} value={selectedVersion}>
                     {versions.map((version) => <option value={version}>{version}</option>)}
                 </Select>
             </Stack>
@@ -152,8 +187,17 @@ const CourseHomepage: React.FC = () => {
         <Heading mb={5}>Modules</Heading>
         <hr/>
         {modules.map((module) => <ModulePreview key={module.id} module={module}/>)}
-        <Flex justifyContent='flex-end'>
-            <Enroll courseAddress={courseAddress || '0x0'}/>
+        <Flex justifyContent='flex-end' mt={5}>
+            { hasEnrolled
+                ? <Stack>
+                        <Flex border={'2px solid white'} px={5} py={2} bg={'green.600'} color='white'>You are enrolled on this course</Flex>
+                        <Button
+                            rightIcon={<AiOutlineDoubleRight/>}
+                            onClick={() => navigate(`/courses/${courseAddress}/version/${selectedVersion}`)}>
+                            Go to course
+                        </Button>
+                    </Stack>
+                : <Button isLoading={isEnrolling} onClick={onEnrollHandler} colorScheme={'green'}>Enroll</Button>}
         </Flex>
 
         <Flex  mt={8} justifyContent={'space-between'} alignItems='center'>

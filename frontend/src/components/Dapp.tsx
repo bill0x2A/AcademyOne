@@ -4,7 +4,6 @@ import { Routes, Route } from 'react-router';
 import {
   Box,
 } from '@chakra-ui/react';
-import NoWalletDetected from './NoWalletDetected';
 import { RINKEBY_NETWORK_ID, HARDHAT_NETWORK_ID } from '../constants/chain';
 import { AddressProvider } from '../context/Address';
 import { SignerProvider } from '../context/Signer';
@@ -16,6 +15,7 @@ import Course from './pages/course/CourseHomepage';
 import Create from './pages/create/Create';
 import Request from './pages/request/Request';
 import Footer from './ui/Footer';
+import Modules from './pages/modules/Modules';
 import { CustomWindow } from '../types';
 import CreateRequest from './pages/createRequest/CreateRequest';
 import Roadmap from './pages/roadmap/Roadmap';
@@ -129,6 +129,7 @@ const Dapp: React.FC = () => {
                     <Route path='/courses/:courseAddress' element={<Course/>}/>
                     <Route path='/courses/:courseAddress/newrequest' element={<CreateRequest/>}/>
                     <Route path='/courses/:courseAddress/requests/:requestIndex' element={<Request/>}/>
+                    <Route path='/courses/:courseAddress/version/:courseVersion' element={<Modules/>}/>
                     <Route path='/courses' element={<Courses/>}/>
                     <Route path='/create' element={<Create/>}/>
                     <Route path='/roadmap' element={<Roadmap/>}/>

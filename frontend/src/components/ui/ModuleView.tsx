@@ -13,13 +13,29 @@ interface ModuleViewProps {
 const ModuleView: React.FC<ModuleViewProps> = ({
     module,
 }: ModuleViewProps) => {
-    return <Box p={5} border={'2px solid white'} my={5}>
-        <Text>{module.name}</Text>
+    return <Box
+        position={'relative'}
+        p={5}
+        pt={'50px'}
+        border={'2px solid white'} 
+        my={5}>
+        <Text
+            py={1}
+            px={3}
+            color='black'
+            bg='white'
+            position='absolute'
+            top={0}
+            left={0}>{module.name}</Text>
         <Text>{module.description}</Text>
-        <Text mt={5}>Learning Materials</Text>
-        <ReactMarkdown>{module.materials}</ReactMarkdown>
-        <Text mt={5}>Questions</Text>
-        <ReactMarkdown>{module.questions}</ReactMarkdown>
+        <Text display={'inline-block'} border={'2px solid white'} px={2} py={1} mt={5}>Learning Materials</Text>
+        <Box p={5}>
+            <ReactMarkdown>{module.materials}</ReactMarkdown>
+        </Box>
+        <Text display={'inline-block'} border={'2px solid white'} px={2} py={1} mt={5}>Questions</Text>
+        <Box p={5}>
+            <ReactMarkdown>{module.questions}</ReactMarkdown>
+        </Box>
     </Box>
 }
 

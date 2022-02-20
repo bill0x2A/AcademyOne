@@ -24,7 +24,7 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({
         <Heading>{name}</Heading>
         <Box
             color={'white'}
-            background={approved ? 'green:400' : 'orange.400'}
+            background={approved ? 'green.600' : 'orange.400'}
             border='2px solid white'
             py={3} 
             px={5} 
