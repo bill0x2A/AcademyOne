@@ -136,8 +136,8 @@ const Create: React.FC = () => {
 
     const deleteModuleHandler = (id: string): void => {
         // This is broken af if done with index so we use a uuid instead
-        const moduleIndexToDelete = getModuleIndex(id);
-        setModules((modules) => ([...modules].splice(moduleIndexToDelete, 1)));
+        const newModules = [...modules].filter((module) => module.id !== id);
+        setModules(newModules);
     };
 
     const createCourse = async () => {
