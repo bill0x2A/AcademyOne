@@ -18,6 +18,7 @@ import Footer from './ui/Footer';
 import Modules from './pages/modules/Modules';
 import { CustomWindow } from '../types';
 import CreateRequest from './pages/createRequest/CreateRequest';
+import FourOhFour from './pages/404/404';
 import Roadmap from './pages/roadmap/Roadmap';
 
 declare let window: CustomWindow;
@@ -133,6 +134,7 @@ const Dapp: React.FC = () => {
                     <Route path='/courses' element={<Courses/>}/>
                     <Route path='/create' element={<Create/>}/>
                     <Route path='/roadmap' element={<Roadmap/>}/>
+                    <Route path='*' element={<FourOhFour/>}/>
                   </Routes>
                 </Box>
                 <Footer/>
